@@ -1,0 +1,1 @@
+Coloque aqui sua imagem (ex: login-bg.jpg) ou vídeo (ex: login-bg.mp4) de fundo do login.
