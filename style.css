@@ -1,0 +1,69 @@
+/* ===== Reset & base ===== */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+#root { min-height: 100vh; }
+
+button, input, select, textarea { font-family: 'Inter', -apple-system, sans-serif; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #CDD6D0; border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ===== Boot / loading states ===== */
+#boot-loading {
+  position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, sans-serif; color: #5C6B64; background: #F5F7F5;
+}
+#boot-error {
+  position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+  font-family: -apple-system, sans-serif; color: #B5473A; background: #F5F7F5;
+  padding: 24px; text-align: center; white-space: pre-line;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes popIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.fade-up { animation: fadeUp 0.35s ease both; }
+.pop-in { animation: popIn 0.18s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up, .pop-in { animation: none !important; }
+}
+
+/* ===== Responsive visibility helpers ===== */
+.hidden { display: none; }
+
+@media (min-width: 1024px) {
+  .lg\:flex { display: flex !important; }
+  .lg\:hidden { display: none !important; }
+}
+
+@media (min-width: 768px) {
+  .md\:flex { display: flex !important; }
+  .md\:hidden { display: none !important; }
+  .md\:block { display: block !important; }
+}
+
+@media (min-width: 640px) {
+  .sm\:block { display: block !important; }
+}
+
+@media (max-width: 767px) {
+  .grid-stack { grid-template-columns: 1fr !important; }
+  .quick-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .area-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ===== App shell: content shifts right of the sidebar on desktop ===== */
+.content-area {
+  padding-left: 0;
+  transition: padding-left .18s ease;
+}
+
+@media (min-width: 1024px) {
+  .content-area {
+    padding-left: var(--sidebar-width, 240px);
+  }
+}
