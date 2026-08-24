@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sanzio - Predio
+* source:	https://sketchfab.com/3d-models/sanzio-predio-0c60bb2de7d4429fa00097b4a769eb0c
+* author:	SrMonteiro (https://sketchfab.com/crispimrafael)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sanzio - Predio" (https://sketchfab.com/3d-models/sanzio-predio-0c60bb2de7d4429fa00097b4a769eb0c) by SrMonteiro (https://sketchfab.com/crispimrafael) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

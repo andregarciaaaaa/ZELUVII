@@ -416,17 +416,12 @@ const FONT_DISPLAY = "'Fraunces', Georgia, serif";
 const FONT_BODY = "'Inter', -apple-system, sans-serif";
 const FONT_MONO = "'JetBrains Mono', monospace";
 
-/* ============================================================
-   LOGIN SCREEN BACKGROUND
-   Troque aqui para usar uma imagem ou um vídeo no painel do login.
-   - type: "none"  -> usa só a cor sólida C.ink (padrão atual)
-   - type: "image" -> coloque seu arquivo em assets/ e ajuste "src"
-   - type: "video" -> coloque seu arquivo em assets/ e ajuste "src"
-   ============================================================ */
-const LOGIN_BACKGROUND = {
-  type: "video", // "none" | "image" | "video"
-  src: "assets/condominio.mp4", // ex: "assets/login-bg.jpg" ou "assets/login-bg.mp4"
-};
+const LOGIN_FEATURES = [
+  "Comunicação direta com moradores e portaria",
+  "Ocorrências acompanhadas em tempo real",
+  "Reservas de áreas comuns sem burocracia",
+  "Painel financeiro sempre atualizado",
+];
 
 /* ============================================================
    MOCK DATA
@@ -873,14 +868,218 @@ function AnelDeZelo({ categorias, size = 280 }) {
 }
 
 /* ============================================================
+   LOGIN SCREEN — helpers
+   ============================================================ */
+function AnimatedCounter({ value, suffix = "" }) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    let raf, start = null;
+    const duration = 1200;
+    function step(ts) {
+      if (start === null) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(eased * value));
+      if (progress < 1) raf = requestAnimationFrame(step);
+    }
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [value]);
+  return <>{display}{suffix}</>;
+}
+
+function RoleTabs({ role, setRole }) {
+  return (
+    <div style={{ display: "flex", gap: 8, marginBottom: 24, background: C.bg, padding: 4, borderRadius: 11 }}>
+      {Object.keys(ROLE_LABEL).map((r) => (
+        <button
+          key={r}
+          type="button"
+          onClick={() => setRole(r)}
+          style={{
+            flex: 1, padding: "8px 6px", borderRadius: 8, border: "none", cursor: "pointer",
+            fontSize: 12.5, fontWeight: 600, background: role === r ? C.surface : "transparent",
+            color: role === r ? C.primary : C.textMuted,
+            boxShadow: role === r ? "0 1px 4px rgba(15,33,27,0.12)" : "none",
+          }}
+        >
+          {ROLE_LABEL[r]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ============================================================
+   INTERACTIVE BUILDING — real 3D model (self-hosted glTF, rendered
+   with <model-viewer>) used as the login hero background.
+   ============================================================ */
+function InteractiveBuilding() {
+  const modelRef = useRef(null);
+
+  return (
+    <div className="building-embed-shell" style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+      <model-viewer
+        ref={modelRef}
+        src="assets/predio-3d/scene.gltf"
+        alt="Modelo 3D do prédio Sanzio"
+        camera-controls=""
+        touch-action="none"
+        camera-orbit="25deg 72deg 85%"
+        min-camera-orbit="auto 20deg auto"
+        max-camera-orbit="auto 110deg auto"
+        interaction-prompt="when-focused"
+        disable-zoom=""
+        environment-image="neutral"
+        shadow-intensity="1"
+        exposure="1"
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block", "--poster-color": "transparent" }}
+      />
+      <p style={{ position: "absolute", right: 16, bottom: 14, zIndex: 1, fontSize: 11.5, fontWeight: 400, margin: 0, color: "rgba(255,255,255,0.45)", pointerEvents: "auto" }}>
+        Modelo 3D:{" "}
+        <a href="https://sketchfab.com/3d-models/sanzio-predio-0c60bb2de7d4429fa00097b4a769eb0c" target="_blank" rel="nofollow noopener noreferrer" style={{ fontWeight: 600, color: "#7BC8E8" }}>
+          Sanzio - Prédio
+        </a>{" "}
+        por{" "}
+        <a href="https://sketchfab.com/crispimrafael" target="_blank" rel="nofollow noopener noreferrer" style={{ fontWeight: 600, color: "#7BC8E8" }}>
+          SrMonteiro
+        </a>
+        , licenciado sob{" "}
+        <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="nofollow noopener noreferrer" style={{ fontWeight: 600, color: "#7BC8E8" }}>
+          CC-BY-4.0
+        </a>
+      </p>
+    </div>
+  );
+}
+
+const MORADOR_FEATURES = [
+  { icon: MessageSquare, title: "Comunicação direta", desc: "Fale com a portaria e o síndico sem sair do app, com histórico de conversas." },
+  { icon: Calendar, title: "Reserva de áreas comuns", desc: "Salão de festas, churrasqueira e quadra reservados em poucos cliques." },
+  { icon: ClipboardList, title: "Ocorrências em tempo real", desc: "Registre um problema e acompanhe cada etapa até a resolução." },
+  { icon: DollarSign, title: "Financeiro sempre à mão", desc: "Boletos, taxas e comprovantes organizados num só lugar." },
+];
+
+const SINDICO_FEATURES = [
+  { icon: TrendingUp, title: "Painel financeiro completo", desc: "Receitas, despesas e inadimplência acompanhadas em tempo real." },
+  { icon: Shield, title: "Gestão de ocorrências", desc: "Priorize, delegue e resolva chamados com total rastreabilidade." },
+  { icon: Megaphone, title: "Comunicados e enquetes", desc: "Avise todo o condomínio e colha decisões em assembleia digital." },
+  { icon: ScrollText, title: "Relatórios e histórico", desc: "Documentação administrativa organizada e pronta para prestação de contas." },
+];
+
+function FeatureCard({ icon: IconCmp, title, desc }) {
+  return (
+    <div
+      style={{
+        display: "flex", gap: 14, padding: "18px 20px", borderRadius: 14,
+        background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.14)",
+        backdropFilter: "blur(10px)",
+      }}
+    >
+      <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(232,163,61,0.18)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <IconCmp size={18} color="#E8A33D" />
+      </div>
+      <div>
+        <div style={{ fontSize: 14.5, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{title}</div>
+        <div style={{ fontSize: 13, lineHeight: 1.55, color: "rgba(255,255,255,0.72)" }}>{desc}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   FEATURES SECTION — video background, revealed as the user
+   scrolls down past the hero.
+   ============================================================ */
+function FeaturesSection() {
+  return (
+    <section style={{ position: "relative", overflow: "hidden", color: "#fff", minHeight: "100vh", display: "flex", alignItems: "center" }}>
+      <video
+        autoPlay muted loop playsInline
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+      >
+        <source src="assets/condominio.mp4" type="video/mp4" />
+      </video>
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,9,0.88) 0%, rgba(8,8,9,0.8) 100%)" }} />
+
+      <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 1180, margin: "0 auto", padding: "88px 32px" }}>
+        <div style={{ maxWidth: 620, marginBottom: 52 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, padding: "6px 12px", borderRadius: 999, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", marginBottom: 18 }}>
+            <Sparkles size={13} color="#E8A33D" /> O que o Zeluvi oferece
+          </div>
+          <div style={{ fontFamily: FONT_DISPLAY, fontSize: "clamp(26px, 3.6vw, 36px)", lineHeight: 1.2, fontWeight: 500 }}>
+            Feito para o dia a dia de quem mora e de quem administra.
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 40 }}>
+          <div>
+            <div style={{ fontFamily: FONT_DISPLAY, fontSize: 18, fontWeight: 600, marginBottom: 16, color: "#E8A33D" }}>Para moradores</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {MORADOR_FEATURES.map((f) => <FeatureCard key={f.title} {...f} />)}
+            </div>
+          </div>
+          <div>
+            <div style={{ fontFamily: FONT_DISPLAY, fontSize: 18, fontWeight: 600, marginBottom: 16, color: "#E8A33D" }}>Para síndicos</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {SINDICO_FEATURES.map((f) => <FeatureCard key={f.title} {...f} />)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
    LOGIN SCREEN
    ============================================================ */
 function LoginScreen({ onLogin }) {
   const [role, setRole] = useState("morador");
   const [email, setEmail] = useState(DEMO_USERS.morador.email);
   const [loading, setLoading] = useState(false);
+  const [authMode, setAuthMode] = useState(null); // null | "entrar" | "cadastro"
+  const [cadastroData, setCadastroData] = useState({ nome: "", email: "", senha: "", condominio: "" });
+  const [ripples, setRipples] = useState([]);
+  const heroRef = useRef(null);
 
   useEffect(() => { setEmail(DEMO_USERS[role].email); }, [role]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    function handleMove(e) {
+      const relX = e.clientX / window.innerWidth;
+      const relY = e.clientY / window.innerHeight;
+      root.style.setProperty("--mx", relX.toFixed(4));
+      root.style.setProperty("--my", relY.toFixed(4));
+    }
+    function handleLeave() {
+      root.style.setProperty("--mx", "0.5");
+      root.style.setProperty("--my", "0.5");
+    }
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseleave", handleLeave);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseleave", handleLeave);
+      root.style.removeProperty("--mx");
+      root.style.removeProperty("--my");
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    function handleClick(e) {
+      const rect = el.getBoundingClientRect();
+      const id = Date.now() + Math.random();
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      setRipples((r) => [...r, { id, x, y }]);
+      setTimeout(() => setRipples((r) => r.filter((rp) => rp.id !== id)), 900);
+    }
+    el.addEventListener("click", handleClick);
+    return () => el.removeEventListener("click", handleClick);
+  }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -891,84 +1090,105 @@ function LoginScreen({ onLogin }) {
     }, 600);
   }
 
+  function handleCadastroSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      onLogin(role);
+      setLoading(false);
+    }, 600);
+  }
+
   return (
-    <div style={{ minHeight: "100vh", display: "flex", background: C.bg, fontFamily: FONT_BODY }}>
-      {/* Brand panel */}
-      <div style={{ flex: 1, background: C.ink, color: "#fff", padding: "56px 56px", flexDirection: "column", justifyContent: "space-between", position: "relative", overflow: "hidden", minWidth: 0 }} className="hidden md:flex">
-        {LOGIN_BACKGROUND.type === "image" && (
-          <div style={{ position: "absolute", inset: 0, zIndex: 0, backgroundImage: `url('${LOGIN_BACKGROUND.src}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
-        )}
-        {LOGIN_BACKGROUND.type === "video" && (
-          <video autoPlay muted loop playsInline style={{ position: "absolute", inset: 0, zIndex: 0, width: "100%", height: "100%", objectFit: "cover" }}>
-            <source src={LOGIN_BACKGROUND.src} />
-          </video>
-        )}
-        {/*<svg width="520" height="520" viewBox="0 0 520 520" style={{ position: "absolute", top: -120, right: -140, opacity: 0.5, zIndex: 1 }}>
-          {SAUDE_CATEGORIAS.map((cat, i) => {
-            const cx = 260, cy = 260, r = 200;
-            const n = SAUDE_CATEGORIAS.length, gap = 10, slice = 360 / n;
-            const start = i * slice + gap / 2, end = (i + 1) * slice - gap / 2;
-            const filledEnd = start + ((end - start) * cat.score) / 100;
-            return (
-              <g key={cat.label}>
-                <path d={arcPath(cx, cy, r, start, end)} stroke="rgba(255,255,255,0.08)" strokeWidth={22} fill="none" strokeLinecap="round" />
-                <path d={arcPath(cx, cy, r, start, filledEnd)} stroke="rgba(232,163,61,0.55)" strokeWidth={22} fill="none" strokeLinecap="round" />
-              </g>
-            );
-          })}
-        </svg>*/}
-        {LOGIN_BACKGROUND.type !== "none" && (
-          <div style={{ position: "absolute", inset: 0, zIndex: 2, background: "linear-gradient(160deg, rgba(15,33,27,0.90) 0%, rgba(15,33,27,0.72) 55%, rgba(15,33,27,0.90) 100%)" }} />
-        )}
-        <div style={{ position: "relative", zIndex: 3 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 64 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 9, background: C.primary, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Building2 size={18} color="#fff" />
-            </div>
-            <span style={{ fontFamily: FONT_DISPLAY, fontSize: 20, fontWeight: 600, letterSpacing: 0.3 }}>Zeluvi</span>
-          </div>
-          <div style={{ fontFamily: FONT_DISPLAY, fontSize: 38, lineHeight: 1.25, fontWeight: 500, maxWidth: 420 }}>
-            Tudo do seu condomínio, <span style={{ color: "#E8A33D" }}>em um só lugar.</span>
-          </div>
-          <div style={{ fontSize: 15, color: "rgba(255,255,255,0.65)", marginTop: 18, maxWidth: 380, lineHeight: 1.6 }}>
-            Comunicação, ocorrências, reservas e gestão administrativa organizadas num único ambiente — para moradores, síndicos e portaria.
-          </div>
-        </div>
-        <div style={{ position: "relative", zIndex: 3, display: "flex", gap: 28, fontSize: 13, color: "rgba(255,255,255,0.55)" }}>
-          <div>124 unidades</div>
-          <div>3 perfis de acesso</div>
-          <div>Índice de saúde em tempo real</div>
-        </div>
-      </div>
+    <div style={{ minHeight: "100vh", background: C.ink, fontFamily: FONT_BODY }}>
+      {/* Cursor spotlight — fixed to the viewport so it glows behind the cursor across the whole page */}
+      <div
+        style={{
+          position: "fixed", inset: 0, zIndex: 40, pointerEvents: "none", mixBlendMode: "screen",
+          background: "radial-gradient(520px circle at calc(var(--mx, 0.5) * 100%) calc(var(--my, 0.5) * 100%), rgba(232,163,61,0.22), transparent 62%)",
+        }}
+      />
 
-      {/* Form panel */}
-      <div style={{ width: 440, maxWidth: "100%", background: C.surface, padding: "56px 40px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 36 }} className="md:hidden">
-          <div style={{ width: 30, height: 30, borderRadius: 8, background: C.primary, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Building2 size={16} color="#fff" />
-          </div>
-          <span style={{ fontFamily: FONT_DISPLAY, fontSize: 18, fontWeight: 600, color: C.ink }}>Zeluvi</span>
-        </div>
-        <div style={{ fontFamily: FONT_DISPLAY, fontSize: 24, fontWeight: 600, color: C.ink, marginBottom: 4 }}>Entrar na plataforma</div>
-        <div style={{ fontSize: 13.5, color: C.textMuted, marginBottom: 28 }}>Selecione seu perfil de demonstração para explorar o Zeluvi.</div>
+      <div
+        ref={heroRef}
+        style={{
+          position: "relative", minHeight: "100vh", overflow: "hidden", color: "#fff",
+        }}
+      >
+        <InteractiveBuilding />
 
-        <div style={{ display: "flex", gap: 8, marginBottom: 24, background: C.bg, padding: 4, borderRadius: 11 }}>
-          {Object.keys(ROLE_LABEL).map((r) => (
-            <button
-              key={r}
-              onClick={() => setRole(r)}
-              style={{
-                flex: 1, padding: "8px 6px", borderRadius: 8, border: "none", cursor: "pointer",
-                fontSize: 12.5, fontWeight: 600, background: role === r ? C.surface : "transparent",
-                color: role === r ? C.primary : C.textMuted,
-                boxShadow: role === r ? "0 1px 4px rgba(15,33,27,0.12)" : "none",
-              }}
-            >
-              {ROLE_LABEL[r]}
-            </button>
+        {/* Click ripples */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 3, pointerEvents: "none" }}>
+          {ripples.map((r) => (
+            <span key={r.id} className="click-ripple" style={{ left: r.x, top: r.y }} />
           ))}
         </div>
 
+        {/* Top navbar */}
+        <div style={{ position: "relative", zIndex: 5, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 32px", flexWrap: "wrap", gap: 12, pointerEvents: "none" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, pointerEvents: "auto" }}>
+            <div style={{ width: 32, height: 32, borderRadius: 9, background: C.primary, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Building2 size={17} color="#fff" />
+            </div>
+            <span style={{ fontFamily: FONT_DISPLAY, fontSize: 19, fontWeight: 600, letterSpacing: 0.3 }}>Zeluvi</span>
+          </div>
+          <div style={{ display: "flex", gap: 10, pointerEvents: "auto" }}>
+            <button className="navbtn-ghost" onClick={() => setAuthMode("entrar")} style={{ padding: "9px 18px", borderRadius: 9, fontSize: 13.5, fontWeight: 600, cursor: "pointer", background: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.25)", backdropFilter: "blur(6px)" }}>
+              Entrar
+            </button>
+            <button className="navbtn-solid" onClick={() => setAuthMode("cadastro")} style={{ padding: "9px 18px", borderRadius: 9, fontSize: 13.5, fontWeight: 700, cursor: "pointer", background: "#E8A33D", color: "#1B1206", border: "1px solid #E8A33D" }}>
+              Cadastrar-se
+            </button>
+          </div>
+        </div>
+
+        {/* Hero content */}
+        <div style={{ position: "relative", zIndex: 5, display: "flex", justifyContent: "flex-start", padding: "40px 32px 80px", minHeight: "calc(100vh - 84px)", pointerEvents: "none" }}>
+          <div style={{ flex: "0 1 560px", maxWidth: 560, display: "flex", flexDirection: "column", alignItems: "flex-start", textAlign: "left", pointerEvents: "auto" }}>
+            <div className="fade-up" style={{ display: "inline-flex", alignItems: "center", gap: 7, fontSize: 12.5, fontWeight: 600, padding: "6px 12px", borderRadius: 999, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)", marginBottom: 22, textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>
+              <Sparkles size={13} color="#E8A33D" /> Gestão condominial inteligente
+            </div>
+            <div className="fade-up" style={{ fontFamily: FONT_DISPLAY, fontSize: "clamp(32px, 5vw, 46px)", lineHeight: 1.18, fontWeight: 500, animationDelay: "0.05s", textShadow: "0 2px 10px rgba(0,0,0,0.55)" }}>
+              Tudo do seu condomínio, <span style={{ color: "#E8A33D" }}>em um só lugar.</span>
+            </div>
+            <div className="fade-up" style={{ fontSize: 15.5, color: "rgba(255,255,255,0.75)", marginTop: 18, maxWidth: 460, lineHeight: 1.65, animationDelay: "0.1s", textShadow: "0 1px 6px rgba(0,0,0,0.55)" }}>
+              Comunicação, ocorrências, reservas e gestão administrativa organizadas num único ambiente — para moradores, síndicos e portaria.
+            </div>
+
+            <div style={{ marginTop: 26, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 11 }}>
+              {LOGIN_FEATURES.map((f, i) => (
+                <div key={f} className="fade-up" style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "rgba(255,255,255,0.9)", animationDelay: `${0.14 + i * 0.06}s`, textShadow: "0 1px 4px rgba(0,0,0,0.55)" }}>
+                  <span style={{ width: 20, height: 20, borderRadius: 999, background: "rgba(232,163,61,0.2)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <Check size={12} color="#E8A33D" />
+                  </span>
+                  {f}
+                </div>
+              ))}
+            </div>
+
+            <div className="fade-up" style={{ display: "flex", justifyContent: "flex-start", gap: 28, marginTop: 40, flexWrap: "wrap", animationDelay: "0.4s" }}>
+              <div>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: 26, fontWeight: 600, textShadow: "0 1px 6px rgba(0,0,0,0.55)" }}><AnimatedCounter value={124} /></div>
+                <div style={{ fontSize: 12.5, color: "rgba(255,255,255,0.65)" }}>unidades geridas</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: 26, fontWeight: 600, textShadow: "0 1px 6px rgba(0,0,0,0.55)" }}><AnimatedCounter value={3} /></div>
+                <div style={{ fontSize: 12.5, color: "rgba(255,255,255,0.65)" }}>perfis de acesso</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: 26, fontWeight: 600, textShadow: "0 1px 6px rgba(0,0,0,0.55)" }}><AnimatedCounter value={98} suffix="%" /></div>
+                <div style={{ fontSize: 12.5, color: "rgba(255,255,255,0.65)" }}>satisfação dos síndicos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <FeaturesSection />
+
+      <Modal open={authMode === "entrar"} onClose={() => setAuthMode(null)} title="Entrar na plataforma" width={420}>
+        <div style={{ fontSize: 13.5, color: C.textMuted, marginBottom: 20 }}>Selecione seu perfil de demonstração para explorar o Zeluvi.</div>
+        <RoleTabs role={role} setRole={setRole} />
         <form onSubmit={handleSubmit}>
           <Field label="E-mail">
             <input style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
@@ -983,14 +1203,49 @@ function LoginScreen({ onLogin }) {
             <a href="#" onClick={(e) => e.preventDefault()} style={{ color: C.primary, fontWeight: 600, textDecoration: "none" }}>Esqueci minha senha</a>
           </div>
           <Button type="submit" style={{ width: "100%", padding: "11px 16px" }} disabled={loading}>
-            {loading ? <Loader2 size={16} className="" style={{ animation: "spin 1s linear infinite" }} /> : null}
+            {loading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : null}
             {loading ? "Entrando..." : `Entrar como ${ROLE_LABEL[role]}`}
           </Button>
         </form>
-        <div style={{ marginTop: 22, padding: 14, borderRadius: 10, background: C.primaryLight, fontSize: 12.5, color: C.primaryDark, lineHeight: 1.5 }}>
+        <div style={{ marginTop: 18, fontSize: 13, color: C.textMuted, textAlign: "center" }}>
+          Ainda não tem conta?{" "}
+          <a href="#" onClick={(e) => { e.preventDefault(); setAuthMode("cadastro"); }} style={{ color: C.primary, fontWeight: 600, textDecoration: "none" }}>
+            Cadastre-se
+          </a>
+        </div>
+        <div style={{ marginTop: 16, padding: 14, borderRadius: 10, background: C.primaryLight, fontSize: 12.5, color: C.primaryDark, lineHeight: 1.5 }}>
           Ambiente de demonstração — os dados exibidos são fictícios e servem apenas para ilustrar a experiência do Zeluvi.
         </div>
-      </div>
+      </Modal>
+
+      <Modal open={authMode === "cadastro"} onClose={() => setAuthMode(null)} title="Criar conta no Zeluvi" width={440}>
+        <div style={{ fontSize: 13.5, color: C.textMuted, marginBottom: 20 }}>Leva menos de 1 minuto. Escolha o perfil que melhor te descreve.</div>
+        <RoleTabs role={role} setRole={setRole} />
+        <form onSubmit={handleCadastroSubmit}>
+          <Field label="Nome completo">
+            <input style={inputStyle} value={cadastroData.nome} onChange={(e) => setCadastroData((d) => ({ ...d, nome: e.target.value }))} type="text" placeholder="Seu nome" required />
+          </Field>
+          <Field label="E-mail">
+            <input style={inputStyle} value={cadastroData.email} onChange={(e) => setCadastroData((d) => ({ ...d, email: e.target.value }))} type="email" placeholder="voce@email.com" required />
+          </Field>
+          <Field label="Condomínio">
+            <input style={inputStyle} value={cadastroData.condominio} onChange={(e) => setCadastroData((d) => ({ ...d, condominio: e.target.value }))} type="text" placeholder="Nome do condomínio" />
+          </Field>
+          <Field label="Senha">
+            <input style={inputStyle} value={cadastroData.senha} onChange={(e) => setCadastroData((d) => ({ ...d, senha: e.target.value }))} type="password" placeholder="Crie uma senha" required />
+          </Field>
+          <Button type="submit" style={{ width: "100%", padding: "11px 16px", marginTop: 8 }} disabled={loading}>
+            {loading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : null}
+            {loading ? "Criando conta..." : "Criar conta gratuita"}
+          </Button>
+        </form>
+        <div style={{ marginTop: 18, fontSize: 13, color: C.textMuted, textAlign: "center" }}>
+          Já tem uma conta?{" "}
+          <a href="#" onClick={(e) => { e.preventDefault(); setAuthMode("entrar"); }} style={{ color: C.primary, fontWeight: 600, textDecoration: "none" }}>
+            Entrar
+          </a>
+        </div>
+      </Modal>
     </div>
   );
 }

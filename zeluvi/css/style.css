@@ -28,8 +28,30 @@ button, input, select, textarea { font-family: 'Inter', -apple-system, sans-seri
 .fade-up { animation: fadeUp 0.35s ease both; }
 .pop-in { animation: popIn 0.18s ease both; }
 
+/* ===== Login hero interactions ===== */
+@keyframes rippleExpand {
+  from { transform: scale(0); opacity: 0.9; }
+  to { transform: scale(18); opacity: 0; }
+}
+.click-ripple {
+  position: absolute;
+  width: 12px; height: 12px;
+  margin-left: -6px; margin-top: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,163,61,0.55) 0%, rgba(232,163,61,0.15) 45%, transparent 70%);
+  pointer-events: none;
+  animation: rippleExpand 0.9s ease-out forwards;
+}
+.navbtn-ghost, .navbtn-solid {
+  transition: transform .12s ease, filter .12s ease;
+}
+.navbtn-ghost:hover { background: rgba(255,255,255,0.16) !important; }
+.navbtn-solid:hover { filter: brightness(1.08); }
+.navbtn-ghost:active, .navbtn-solid:active { transform: scale(0.97); }
+
 @media (prefers-reduced-motion: reduce) {
   .fade-up, .pop-in { animation: none !important; }
+  .click-ripple { animation: none !important; display: none; }
 }
 
 /* ===== Responsive visibility helpers ===== */
