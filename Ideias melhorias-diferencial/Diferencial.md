@@ -6,7 +6,15 @@ Mensagens como **“Alguém conhece um eletricista?”**, **“Alguém tem conta
 
 Alguns exemplos reais desse comportamento podem ser observados nos grupos do próprio condomínio:
 
-*[Inserir aqui os 4 prints das conversas, ocultando nomes, números de telefone e demais dados pessoais.]*
+<p align="center">
+  <img src="print1.png" width="45%">
+  <img src="print2.png" width="45%">
+</p>
+
+<p align="center">
+  <img src="print3.png" width="45%">
+  <img src="print4.png" width="45%">
+</p>
 
 Apesar de funcionar, esse processo é pouco organizado. As indicações ficam espalhadas entre diversas mensagens, dificultando encontrar novamente um profissional recomendado anteriormente. Além disso, normalmente não há informações suficientes sobre a qualidade do serviço, preço cobrado ou confiabilidade do profissional.
 
