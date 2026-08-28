@@ -74,6 +74,8 @@ const ICON_PATHS = {
   <path d="M9 18h6" />
   <path d="M10 22h4" />`,
   Loader2: `<path d="M21 12a9 9 0 1 1-6.219-8.56" />`,
+  Mail: `<rect width="20" height="16" x="2" y="4" rx="2" />
+  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />`,
   LogOut: `<path d="m16 17 5-5-5-5" />
   <path d="M21 12H9" />
   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />`,
@@ -118,6 +120,8 @@ const ICON_PATHS = {
   ShieldAlert: `<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
   <path d="M12 8v4" />
   <path d="M12 16h.01" />`,
+  Smartphone: `<rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+  <path d="M12 18h.01" />`,
   Sparkles: `<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z" />
   <path d="M20 2v4" />
   <path d="M22 4h-4" />
@@ -194,6 +198,7 @@ function Leaf(props) { return <Icon name="Leaf" {...props} />; }
 function Lightbulb(props) { return <Icon name="Lightbulb" {...props} />; }
 function Loader2(props) { return <Icon name="Loader2" {...props} />; }
 function LogOut(props) { return <Icon name="LogOut" {...props} />; }
+function Mail(props) { return <Icon name="Mail" {...props} />; }
 function MapPin(props) { return <Icon name="MapPin" {...props} />; }
 function Megaphone(props) { return <Icon name="Megaphone" {...props} />; }
 function Menu(props) { return <Icon name="Menu" {...props} />; }
@@ -208,6 +213,7 @@ function Send(props) { return <Icon name="Send" {...props} />; }
 function Settings(props) { return <Icon name="Settings" {...props} />; }
 function Shield(props) { return <Icon name="Shield" {...props} />; }
 function ShieldAlert(props) { return <Icon name="ShieldAlert" {...props} />; }
+function Smartphone(props) { return <Icon name="Smartphone" {...props} />; }
 function Sparkles(props) { return <Icon name="Sparkles" {...props} />; }
 function Trees(props) { return <Icon name="Trees" {...props} />; }
 function TrendingDown(props) { return <Icon name="TrendingDown" {...props} />; }
@@ -639,7 +645,7 @@ const NAV = {
 const ROLE_LABEL = { morador: "Morador", sindico: "Síndico / Administração", portaria: "Portaria" };
 
 const DEMO_USERS = {
-  morador: { name: "Renata Bittencourt", unidade: "302", email: "renata@email.com" },
+  morador: { name: "Renata Bittencourt", unidade: "302", bloco: "Bloco A", email: "renata@email.com" },
   sindico: { name: "Marcelo Vieira", unidade: "-", email: "marcelo@zeluvi.com" },
   portaria: { name: "José Carlos", unidade: "-", email: "portaria@zeluvi.com" },
 };
@@ -1032,14 +1038,48 @@ function FeaturesSection() {
 }
 
 /* ============================================================
-   LOGIN SCREEN
+   LOGIN SCREEN — helpers de identidade (nome a partir do e-mail,
+   máscara de telefone e logo do Google) + o componente em si
    ============================================================ */
+function nameFromEmail(email) {
+  const local = (email || "").split("@")[0] || "";
+  const nice = local
+    .replace(/[._-]+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+  return nice || "Usuário";
+}
+
+function formatTelefone(value) {
+  const digits = value.replace(/\D/g, "").slice(0, 11);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
+function GoogleG({ size = 18 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.8 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z" />
+      <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l5.7-5.7C34.6 6 29.6 4 24 4c-7.5 0-13.9 4.3-17.7 10.7z" />
+      <path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.2-5.1l-6.6-5.4C29.6 35.4 26.9 36 24 36c-5.3 0-9.7-3.1-11.3-7.5l-6.6 5.1C9.9 39.6 16.4 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1 3-3.1 5.5-5.7 7.1l6.6 5.4C39.9 37.6 44 31.9 44 24c0-1.3-.1-2.7-.4-3.5z" />
+    </svg>
+  );
+}
+
 function LoginScreen({ onLogin }) {
   const [role, setRole] = useState("morador");
   const [email, setEmail] = useState(DEMO_USERS.morador.email);
+  const [loginMethod, setLoginMethod] = useState("email"); // "email" | "celular"
+  const [telefone, setTelefone] = useState("");
+  const [nomeCelular, setNomeCelular] = useState("");
   const [loading, setLoading] = useState(false);
   const [authMode, setAuthMode] = useState(null); // null | "entrar" | "cadastro"
-  const [cadastroData, setCadastroData] = useState({ nome: "", email: "", senha: "", condominio: "" });
+  const [cadastroData, setCadastroData] = useState({ nome: "", email: "", senha: "", condominio: "", bloco: "", unidade: "" });
   const [ripples, setRipples] = useState([]);
   const heroRef = useRef(null);
 
@@ -1085,16 +1125,33 @@ function LoginScreen({ onLogin }) {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {
-      onLogin(role);
+      if (loginMethod === "celular") {
+        onLogin(role, { name: nomeCelular.trim() || `Usuário ${telefone.slice(-4)}`, telefone });
+      } else {
+        onLogin(role, { name: nameFromEmail(email), email });
+      }
       setLoading(false);
     }, 600);
+  }
+
+  function handleGoogleLogin() {
+    setLoading(true);
+    setTimeout(() => {
+      onLogin(role, { name: nameFromEmail(email), email, viaGoogle: true });
+      setLoading(false);
+    }, 500);
   }
 
   function handleCadastroSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {
-      onLogin(role);
+      const overrides = { name: cadastroData.nome.trim() || nameFromEmail(cadastroData.email), email: cadastroData.email };
+      if (role === "morador") {
+        overrides.unidade = cadastroData.unidade.trim() || DEMO_USERS.morador.unidade;
+        overrides.bloco = cadastroData.bloco.trim() || DEMO_USERS.morador.bloco;
+      }
+      onLogin(role, overrides);
       setLoading(false);
     }, 600);
   }
@@ -1189,10 +1246,46 @@ function LoginScreen({ onLogin }) {
       <Modal open={authMode === "entrar"} onClose={() => setAuthMode(null)} title="Entrar na plataforma" width={420}>
         <div style={{ fontSize: 13.5, color: C.textMuted, marginBottom: 20 }}>Selecione seu perfil de demonstração para explorar o Zeluvi.</div>
         <RoleTabs role={role} setRole={setRole} />
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={loading}
+          style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "10px 16px", borderRadius: 9, border: `1px solid ${C.borderStrong}`, background: "#fff", color: C.ink, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}
+        >
+          <GoogleG size={17} /> Continuar com Google
+        </button>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "4px 0 18px", fontSize: 12, color: C.textFaint }}>
+          <div style={{ flex: 1, height: 1, background: C.border }} />
+          ou entre com e-mail ou celular
+          <div style={{ flex: 1, height: 1, background: C.border }} />
+        </div>
+
+        <div style={{ display: "flex", gap: 8, marginBottom: 16, background: C.bg, padding: 4, borderRadius: 11 }}>
+          <button type="button" onClick={() => setLoginMethod("email")} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 6px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 12.5, fontWeight: 600, background: loginMethod === "email" ? C.surface : "transparent", color: loginMethod === "email" ? C.primary : C.textMuted, boxShadow: loginMethod === "email" ? "0 1px 4px rgba(15,33,27,0.12)" : "none" }}>
+            <Mail size={13} /> E-mail
+          </button>
+          <button type="button" onClick={() => setLoginMethod("celular")} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 6px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 12.5, fontWeight: 600, background: loginMethod === "celular" ? C.surface : "transparent", color: loginMethod === "celular" ? C.primary : C.textMuted, boxShadow: loginMethod === "celular" ? "0 1px 4px rgba(15,33,27,0.12)" : "none" }}>
+            <Smartphone size={13} /> Celular
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit}>
-          <Field label="E-mail">
-            <input style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
-          </Field>
+          {loginMethod === "email" ? (
+            <Field label="E-mail">
+              <input style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
+            </Field>
+          ) : (
+            <>
+              <Field label="Seu nome">
+                <input style={inputStyle} value={nomeCelular} onChange={(e) => setNomeCelular(e.target.value)} type="text" placeholder="Como devemos te chamar" />
+              </Field>
+              <Field label="Número de celular">
+                <input style={inputStyle} value={telefone} onChange={(e) => setTelefone(formatTelefone(e.target.value))} type="tel" placeholder="(11) 91234-5678" />
+              </Field>
+            </>
+          )}
           <Field label="Senha">
             <input style={inputStyle} type="password" defaultValue="••••••••" />
           </Field>
@@ -1231,6 +1324,20 @@ function LoginScreen({ onLogin }) {
           <Field label="Condomínio">
             <input style={inputStyle} value={cadastroData.condominio} onChange={(e) => setCadastroData((d) => ({ ...d, condominio: e.target.value }))} type="text" placeholder="Nome do condomínio" />
           </Field>
+          {role === "morador" && (
+            <div style={{ display: "flex", gap: 12 }}>
+              <div style={{ flex: 1 }}>
+                <Field label="Bloco / Torre">
+                  <input style={inputStyle} value={cadastroData.bloco} onChange={(e) => setCadastroData((d) => ({ ...d, bloco: e.target.value }))} type="text" placeholder="Ex: Bloco A" required />
+                </Field>
+              </div>
+              <div style={{ flex: 1 }}>
+                <Field label="Unidade">
+                  <input style={inputStyle} value={cadastroData.unidade} onChange={(e) => setCadastroData((d) => ({ ...d, unidade: e.target.value }))} type="text" placeholder="Ex: 302" required />
+                </Field>
+              </div>
+            </div>
+          )}
           <Field label="Senha">
             <input style={inputStyle} value={cadastroData.senha} onChange={(e) => setCadastroData((d) => ({ ...d, senha: e.target.value }))} type="password" placeholder="Crie uma senha" required />
           </Field>
@@ -1379,7 +1486,7 @@ function Topbar({ user, role, onLogout, setMobileOpen, notifOpen, setNotifOpen, 
 /* ============================================================
    PAGE: DASHBOARD — MORADOR
    ============================================================ */
-function DashboardMorador({ user, setPage, ocorrencias, reservas, comunicados }) {
+function DashboardMorador({ user, setPage, ocorrencias, reservas, comunicados, entregas }) {
   const minhasOcorrencias = ocorrencias.filter((o) => o.morador === user.name);
   const minhasReservas = reservas.filter((r) => r.morador === user.name);
   const emAndamento = minhasOcorrencias.filter((o) => !["Resolvida", "Cancelada"].includes(o.status));
@@ -1388,13 +1495,13 @@ function DashboardMorador({ user, setPage, ocorrencias, reservas, comunicados })
     <div className="fade-up">
       <Card style={{ background: C.ink, color: "#fff", marginBottom: 20, border: "none" }}>
         <div style={{ fontFamily: FONT_DISPLAY, fontSize: 22, fontWeight: 600 }}>Olá, {user.name.split(" ")[0]} 👋</div>
-        <div style={{ fontSize: 13.5, color: "rgba(255,255,255,0.65)", marginTop: 4 }}>Unidade {user.unidade} · Bloco A</div>
+        <div style={{ fontSize: 13.5, color: "rgba(255,255,255,0.65)", marginTop: 4 }}>Unidade {user.unidade} · {user.bloco}</div>
       </Card>
 
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 20 }}>
         <StatCard icon={AlertTriangle} label="Solicitações em andamento" value={emAndamento.length} accent={C.amber} />
         <StatCard icon={Calendar} label="Próxima reserva" value={minhasReservas[0] ? minhasReservas[0].data.slice(8, 10) + "/" + minhasReservas[0].data.slice(5, 7) : "—"} accent={C.primary} />
-        <StatCard icon={Package} label="Encomendas aguardando" value={ENTREGAS.filter((e) => e.unidade === user.unidade && e.status !== "Retirada").length} accent={C.info} />
+        <StatCard icon={Package} label="Encomendas aguardando" value={entregas.filter((e) => e.unidade === user.unidade && e.status !== "Retirada").length} accent={C.info} />
         <StatCard icon={DollarSign} label="Situação financeira" value="Em dia" accent={C.primary} />
       </div>
 
@@ -2204,8 +2311,21 @@ function App() {
     setTimeout(() => setToast(null), 3000);
   }
 
-  function handleLogin(role) {
-    setSession({ role, user: DEMO_USERS[role] });
+  function handleLogin(role, overrides = {}) {
+    const user = { ...DEMO_USERS[role], ...overrides };
+
+    // Os dados de exemplo (ocorrências, reservas, entregas) foram todos
+    // pré-cadastrados no nome da moradora demo "Renata Bittencourt".
+    // Para quem loga como morador com outro nome, "adotamos" esses
+    // registros de exemplo para o nome novo, senão o dashboard apareceria vazio.
+    if (role === "morador" && user.name !== DEMO_USERS.morador.name) {
+      const nomeOriginal = DEMO_USERS.morador.name;
+      setOcorrencias((prev) => prev.map((o) => (o.morador === nomeOriginal ? { ...o, morador: user.name, unidade: user.unidade } : o)));
+      setReservas((prev) => prev.map((r) => (r.morador === nomeOriginal ? { ...r, morador: user.name, unidade: user.unidade } : r)));
+      setEntregas((prev) => prev.map((e) => (e.destinatario === nomeOriginal ? { ...e, destinatario: user.name, unidade: user.unidade } : e)));
+    }
+
+    setSession({ role, user });
     setPage("dashboard");
   }
 
@@ -2222,7 +2342,7 @@ function App() {
 
   let content;
   if (page === "dashboard") {
-    content = role === "morador" ? <DashboardMorador user={user} setPage={setPage} ocorrencias={ocorrencias} reservas={reservas} comunicados={comunicados} />
+    content = role === "morador" ? <DashboardMorador user={user} setPage={setPage} ocorrencias={ocorrencias} reservas={reservas} comunicados={comunicados} entregas={entregas} />
       : role === "sindico" ? <DashboardSindico setPage={setPage} ocorrencias={ocorrencias} />
       : <DashboardPortaria setPage={setPage} entregas={entregas} />;
   } else if (page === "ocorrencias") {
