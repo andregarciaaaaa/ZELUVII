@@ -76,8 +76,3 @@ Se preferir uma ferramenta visual (pgAdmin ou DBeaver), crie o banco `zeluvi`, a
 - **Ocorrência (RN08):** só aceita os status `solicitada`, `em_andamento`, `aguardando_terceiro`, `resolvida` e `cancelada`.
 - **Encomenda:** status `aguardando_retirada` ou `retirada`.
 - **Financeiro:** taxas e despesas têm status `pendente` ou `pago`. Pago exige data de pagamento. "Atrasado" não é status: é uma taxa pendente com vencimento já passado, descoberta por consulta.
-
-## Observações
-
-- As tabelas `visitante`, `token_redefinicao_senha` e `despesa` são novas em relação ao DER antigo do grupo e aguardam aprovação do André.
-- As pendências de cada módulo estão no fim de cada dicionário.
