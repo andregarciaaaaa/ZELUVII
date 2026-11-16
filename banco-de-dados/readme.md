@@ -4,7 +4,6 @@ Esta pasta reúne tudo o que foi feito na parte de **Banco de Dados** do projeto
 
 - **SGBD:** PostgreSQL 16
 - **Responsável:** Cauã Henrique (Banco de Dados)
-- **Revisão:** André
 
 ## O que tem aqui
 
