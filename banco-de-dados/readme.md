@@ -15,12 +15,12 @@ banco-de-dados/
 │   ├── SCRUM-67-DER_ZELUVI_final.png
 │   └── SCRUM-46-DER
 └── dicionario-de-dados/
-    ├── SCRUM-46_Revisao_do_DER.docx
-    ├── SCRUM-50_Dicionario_de_dados_Usuarios_Perfis_Condominios_e_Unidades.docx
-    ├── SCRUM-58_Dicionario_de_dados_Areas_comuns_e_Reservas.docx
-    ├── SCRUM-59_Dicionario_de_dados_Avisos_Ocorrencias_Encomendas_e_Visitantes.docx
-    ├── SCRUM-67_Dicionario_de_dados_Financeiro.docx
-    └── SCRUM-67_Dicionario_de_dados_Completo_ZELUVI.docx
+    ├── SCRUM-46_Revisao_do_DER.pdf
+    ├── SCRUM-50_Dicionario_de_dados_Usuarios_Perfis_Condominios_e_Unidades.pdf
+    ├── SCRUM-58_Dicionario_de_dados_Areas_comuns_e_Reservas.pdf
+    ├── SCRUM-59_Dicionario_de_dados_Avisos_Ocorrencias_Encomendas_e_Visitantes.pdf
+    ├── SCRUM-67_Dicionario_de_dados_Financeiro.pdf
+    └── SCRUM-67_Dicionario_de_dados_Completo_ZELUVI.pdf
 ```
 
 | Arquivo | Para que serve |
