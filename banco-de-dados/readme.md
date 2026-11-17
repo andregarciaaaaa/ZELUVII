@@ -26,7 +26,6 @@ banco-de-dados/
 |---|---|
 | `schema.sql` | Script que cria as 18 tabelas, com chaves, tipos e regras |
 | `DER/` | Diagrama entidade-relacionamento final, em imagem e em PDF |
-| SCRUM-46 | Revisão do DER, escolha do SGBD e padrão de nomes |
 | SCRUM-50 | Dicionário de usuários, perfis, condomínios e unidades |
 | SCRUM-58 | Dicionário de áreas comuns e reservas |
 | SCRUM-59 | Dicionário de avisos (comunicados), ocorrências, encomendas e visitantes |
