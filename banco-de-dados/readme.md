@@ -15,7 +15,6 @@ banco-de-dados/
 │   ├── SCRUM-67-DER_ZELUVI_final.png
 │   └── SCRUM-46-DER
 └── dicionario-de-dados/
-    ├── SCRUM-46_Revisao_do_DER.pdf
     ├── SCRUM-50_Dicionario_de_dados_Usuarios_Perfis_Condominios_e_Unidades.pdf
     ├── SCRUM-58_Dicionario_de_dados_Areas_comuns_e_Reservas.pdf
     ├── SCRUM-59_Dicionario_de_dados_Avisos_Ocorrencias_Encomendas_e_Visitantes.pdf
