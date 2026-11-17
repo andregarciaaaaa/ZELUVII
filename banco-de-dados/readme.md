@@ -12,8 +12,8 @@ banco-de-dados/
 ├── readme.md
 ├── schema.sql
 ├── DER/
-│   ├── SCRUM-67-DER_ZELUVI_final.png
-│   └── SCRUM-46-DER
+│   ├── SCRUM-46-DER.png
+│   └── SCRUM-67-DER_ZELUVI_final.pdf
 └── dicionario-de-dados/
     ├── SCRUM-50_Dicionario_de_dados_Usuarios_Perfis_Condominios_e_Unidades.pdf
     ├── SCRUM-58_Dicionario_de_dados_Areas_comuns_e_Reservas.pdf
