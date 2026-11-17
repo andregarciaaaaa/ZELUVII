@@ -24,7 +24,7 @@ banco-de-dados/
 
 | Arquivo | Para que serve |
 |---|---|
-| `schema.sql` | Script que cria as 18 tabelas, com chaves, tipos e regras (versão 4) |
+| `schema.sql` | Script que cria as 18 tabelas, com chaves, tipos e regras |
 | `DER/` | Diagrama entidade-relacionamento final, em imagem e em PDF |
 | SCRUM-46 | Revisão do DER, escolha do SGBD e padrão de nomes |
 | SCRUM-50 | Dicionário de usuários, perfis, condomínios e unidades |
