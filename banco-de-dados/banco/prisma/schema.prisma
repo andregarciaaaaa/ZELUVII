@@ -1,0 +1,316 @@
+// ZELUVI - modelo do banco para o Prisma (PostgreSQL 16)
+// Espelha o schema.sql versao 4 (18 tabelas).
+// Padrao: modelo em PascalCase no singular; @@map liga ao nome real da tabela (snake_case);
+// @map liga ao nome real da coluna quando o nome no codigo e diferente.
+// As regras CHECK e o indice unico parcial da reserva NAO existem no Prisma:
+// ficam no arquivo regras_extras.sql (veja o PASSO_A_PASSO.md).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------------
+// Acesso e estrutura do condominio
+// ------------------------------------------------------------------
+model Perfil {
+  id        Int     @id @default(autoincrement()) @map("id_perfil")
+  nome      String  @unique @db.VarChar(30)
+  descricao String? @db.VarChar(255)
+
+  vinculos UsuarioCondominio[]
+
+  @@map("perfil")
+}
+
+model Condominio {
+  id       Int    @id @default(autoincrement()) @map("id_condominio")
+  nome     String @db.VarChar(120)
+  endereco String @db.VarChar(255)
+
+  vinculos    UsuarioCondominio[]
+  unidades    Unidade[]
+  comunicados Comunicado[]
+  prestadores Prestador[]
+  faqs        Faq[]
+  areas       AreaComum[]
+  despesas    Despesa[]
+
+  @@map("condominio")
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement()) @map("id_usuario")
+  nome      String   @db.VarChar(120)
+  email     String   @unique @db.VarChar(150)
+  senhaHash String   @map("senha_hash") @db.VarChar(255)
+  ativo     Boolean  @default(true)
+  telefone  String?  @db.VarChar(11)
+  criadoEm  DateTime @default(now()) @map("criado_em") @db.Timestamp(6)
+
+  tokens               TokenRedefinicaoSenha[]
+  vinculos             UsuarioCondominio[]
+  moradias             Morador[]
+  comunicados          Comunicado[]
+  reservasDecididas    Reserva[]               @relation("DecididaPor")
+  encomendasRegistradas Encomenda[]            @relation("RegistradaPor")
+  encomendasRetiradas  Encomenda[]             @relation("RetiradaPor")
+  visitantesRegistrados Visitante[]
+  historicos           HistoricoOcorrencia[]
+
+  @@map("usuario")
+}
+
+model TokenRedefinicaoSenha {
+  id        Int       @id @default(autoincrement()) @map("id_token")
+  usuarioId Int       @map("id_usuario")
+  tokenHash String    @map("token_hash") @db.VarChar(255)
+  expiraEm  DateTime  @map("expira_em") @db.Timestamp(6)
+  usadoEm   DateTime? @map("usado_em") @db.Timestamp(6)
+  criadoEm  DateTime  @default(now()) @map("criado_em") @db.Timestamp(6)
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("token_redefinicao_senha")
+}
+
+// Tabela associativa (N:N) usuario x condominio: aqui fica o perfil (RN01)
+model UsuarioCondominio {
+  id           Int     @id @default(autoincrement()) @map("id_vinculo")
+  usuarioId    Int     @map("id_usuario")
+  condominioId Int     @map("id_condominio")
+  perfilId     Int     @map("id_perfil")
+  ativo        Boolean @default(true)
+
+  usuario    Usuario    @relation(fields: [usuarioId], references: [id])
+  condominio Condominio @relation(fields: [condominioId], references: [id])
+  perfil     Perfil     @relation(fields: [perfilId], references: [id])
+
+  @@unique([usuarioId, condominioId])
+  @@map("usuario_condominio")
+}
+
+model Unidade {
+  id            Int     @id @default(autoincrement()) @map("id_unidade")
+  condominioId  Int     @map("id_condominio")
+  identificacao String  @db.VarChar(30)
+  bloco         String? @db.VarChar(30)
+  numero        String? @db.VarChar(20)
+
+  condominio  Condominio  @relation(fields: [condominioId], references: [id])
+  moradores   Morador[]
+  encomendas  Encomenda[]
+  visitantes  Visitante[]
+  lancamentos Lancamento[]
+
+  @@unique([condominioId, identificacao])
+  @@map("unidade")
+}
+
+// Tabela associativa (N:N) usuario x unidade
+model Morador {
+  id          Int     @id @default(autoincrement()) @map("id_morador")
+  usuarioId   Int     @map("id_usuario")
+  unidadeId   Int     @map("id_unidade")
+  tipoVinculo String  @map("tipo_vinculo") @db.VarChar(30) // proprietario | inquilino
+  principal   Boolean @default(false)
+
+  usuario     Usuario      @relation(fields: [usuarioId], references: [id])
+  unidade     Unidade      @relation(fields: [unidadeId], references: [id])
+  reservas    Reserva[]
+  ocorrencias Ocorrencia[]
+
+  @@unique([usuarioId, unidadeId])
+  @@map("morador")
+}
+
+// ------------------------------------------------------------------
+// Comunicacao e informacoes
+// ------------------------------------------------------------------
+model Comunicado {
+  id             Int      @id @default(autoincrement()) @map("id_comunicado")
+  condominioId   Int      @map("id_condominio")
+  autorId        Int      @map("id_autor")
+  titulo         String   @db.VarChar(150)
+  conteudo       String
+  dataPublicacao DateTime @default(now()) @map("data_publicacao") @db.Timestamp(6)
+
+  condominio Condominio @relation(fields: [condominioId], references: [id])
+  autor      Usuario    @relation(fields: [autorId], references: [id])
+
+  @@map("comunicado")
+}
+
+model Prestador {
+  id           Int     @id @default(autoincrement()) @map("id_prestador")
+  condominioId Int     @map("id_condominio")
+  nome         String  @db.VarChar(150)
+  servico      String  @db.VarChar(100)
+  telefone     String? @db.VarChar(30)
+  observacoes  String?
+
+  condominio Condominio @relation(fields: [condominioId], references: [id])
+
+  @@map("prestador")
+}
+
+model Faq {
+  id           Int     @id @default(autoincrement()) @map("id_faq")
+  condominioId Int     @map("id_condominio")
+  pergunta     String  @db.VarChar(255)
+  resposta     String
+  ativo        Boolean @default(true)
+
+  condominio Condominio @relation(fields: [condominioId], references: [id])
+
+  @@map("faq")
+}
+
+// ------------------------------------------------------------------
+// Areas comuns e reservas (RN05, RN06)
+// ------------------------------------------------------------------
+model AreaComum {
+  id           Int     @id @default(autoincrement()) @map("id_area")
+  condominioId Int     @map("id_condominio")
+  nome         String  @db.VarChar(100)
+  regras       String?
+  capacidade   Int?
+
+  condominio Condominio @relation(fields: [condominioId], references: [id])
+  reservas   Reserva[]
+
+  @@unique([condominioId, nome])
+  @@map("area_comum")
+}
+
+model Reserva {
+  id          Int       @id @default(autoincrement()) @map("id_reserva")
+  areaId      Int       @map("id_area")
+  moradorId   Int       @map("id_morador")
+  inicio      DateTime  @db.Timestamp(6)
+  fim         DateTime  @db.Timestamp(6)
+  // pendente (padrao) | confirmada | recusada | cancelada
+  status      String    @default("pendente") @db.VarChar(20)
+  decididoPorId Int?    @map("id_decidido_por")
+  decididoEm  DateTime? @map("decidido_em") @db.Timestamp(6)
+
+  area        AreaComum @relation(fields: [areaId], references: [id])
+  morador     Morador   @relation(fields: [moradorId], references: [id])
+  decididoPor Usuario?  @relation("DecididaPor", fields: [decididoPorId], references: [id])
+
+  @@map("reserva")
+}
+
+// ------------------------------------------------------------------
+// Portaria
+// ------------------------------------------------------------------
+model Encomenda {
+  id             Int       @id @default(autoincrement()) @map("id_encomenda")
+  unidadeId      Int       @map("id_unidade")
+  registradoPorId Int      @map("id_registrado_por")
+  retiradoPorId  Int?      @map("id_retirado_por")
+  descricao      String    @db.VarChar(255)
+  transportadora String?   @db.VarChar(60)
+  codigoRastreio String?   @map("codigo_rastreio") @db.VarChar(40)
+  dataRecebimento DateTime @default(now()) @map("data_recebimento") @db.Timestamp(6)
+  dataRetirada   DateTime? @map("data_retirada") @db.Timestamp(6)
+  // aguardando_retirada (padrao) | retirada
+  status         String    @default("aguardando_retirada") @db.VarChar(20)
+
+  unidade       Unidade  @relation(fields: [unidadeId], references: [id])
+  registradoPor Usuario  @relation("RegistradaPor", fields: [registradoPorId], references: [id])
+  retiradoPor   Usuario? @relation("RetiradaPor", fields: [retiradoPorId], references: [id])
+
+  @@map("encomenda")
+}
+
+model Visitante {
+  id              Int       @id @default(autoincrement()) @map("id_visitante")
+  unidadeId       Int       @map("id_unidade")
+  registradoPorId Int       @map("id_registrado_por")
+  nome            String    @db.VarChar(120)
+  documento       String?   @db.VarChar(20)
+  motivo          String?   @db.VarChar(100)
+  dataEntrada     DateTime  @default(now()) @map("data_entrada") @db.Timestamp(6)
+  dataSaida       DateTime? @map("data_saida") @db.Timestamp(6)
+
+  unidade       Unidade @relation(fields: [unidadeId], references: [id])
+  registradoPor Usuario @relation(fields: [registradoPorId], references: [id])
+
+  @@map("visitante")
+}
+
+// ------------------------------------------------------------------
+// Ocorrencias (RN08, RN09)
+// ------------------------------------------------------------------
+model Ocorrencia {
+  id           Int      @id @default(autoincrement()) @map("id_ocorrencia")
+  moradorId    Int      @map("id_morador")
+  assunto      String   @db.VarChar(150)
+  descricao    String
+  // solicitada (padrao) | em_andamento | aguardando_terceiro | resolvida | cancelada
+  status       String   @default("solicitada") @db.VarChar(30)
+  dataAbertura DateTime @default(now()) @map("data_abertura") @db.Timestamp(6)
+
+  morador    Morador               @relation(fields: [moradorId], references: [id])
+  historicos HistoricoOcorrencia[]
+
+  @@map("ocorrencia")
+}
+
+model HistoricoOcorrencia {
+  id             Int      @id @default(autoincrement()) @map("id_historico")
+  ocorrenciaId   Int      @map("id_ocorrencia")
+  usuarioId      Int      @map("id_usuario")
+  statusAnterior String?  @map("status_anterior") @db.VarChar(30)
+  statusNovo     String   @map("status_novo") @db.VarChar(30)
+  observacao     String?
+  dataAlteracao  DateTime @default(now()) @map("data_alteracao") @db.Timestamp(6)
+
+  ocorrencia Ocorrencia @relation(fields: [ocorrenciaId], references: [id])
+  usuario    Usuario    @relation(fields: [usuarioId], references: [id])
+
+  @@map("historico_ocorrencia")
+}
+
+// ------------------------------------------------------------------
+// Financeiro (RN10)
+// ------------------------------------------------------------------
+model Lancamento {
+  id            Int       @id @default(autoincrement()) @map("id_lancamento")
+  unidadeId     Int       @map("id_unidade")
+  tipo          String    @db.VarChar(20) // cota_condominial | taxa_extra | multa
+  competencia   DateTime  @db.Date        // sempre dia 1 do mes
+  valor         Decimal   @db.Decimal(10, 2)
+  vencimento    DateTime  @db.Date
+  dataPagamento DateTime? @map("data_pagamento") @db.Date
+  status        String    @default("pendente") @db.VarChar(20) // pendente | pago
+  boletoUrl     String?   @map("boleto_url") @db.VarChar(500)
+
+  unidade Unidade @relation(fields: [unidadeId], references: [id])
+
+  @@unique([unidadeId, tipo, competencia])
+  @@map("lancamento")
+}
+
+model Despesa {
+  id            Int       @id @default(autoincrement()) @map("id_despesa")
+  condominioId  Int       @map("id_condominio")
+  // folha | manutencao | agua_energia | limpeza | seguranca | administrativo
+  categoria     String    @db.VarChar(30)
+  descricao     String    @db.VarChar(150)
+  fornecedor    String?   @db.VarChar(120)
+  valor         Decimal   @db.Decimal(10, 2)
+  competencia   DateTime  @db.Date
+  vencimento    DateTime  @db.Date
+  dataPagamento DateTime? @map("data_pagamento") @db.Date
+  status        String    @default("pendente") @db.VarChar(20) // pendente | pago
+
+  condominio Condominio @relation(fields: [condominioId], references: [id])
+
+  @@map("despesa")
+}
