@@ -1,19 +1,39 @@
 {
   "name": "zeluvi-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API REST do ZELUVI (Express + Prisma + PostgreSQL)",
+  "main": "src/server.js",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "node --test --test-concurrency=1 \"tests/*.test.js\"",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma migrate reset --force",
+    "db:diff": "prisma migrate diff --from-url \"$DATABASE_URL\" --to-schema-datamodel prisma/schema.prisma --script",
+    "db:dev": "node scripts/dev-db.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "5.22.0",
     "bcryptjs": "^3.0.3",
-    "prisma": "^5.22.0"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "5.22.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "embedded-postgres": "^17.5.0-beta.15"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
