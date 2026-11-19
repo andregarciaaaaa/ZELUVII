@@ -18,7 +18,7 @@ Cada pessoa cria o proprio banco local a partir da migracao que esta neste repos
    ```
    DATABASE_URL="postgresql://postgres:SUASENHA@localhost:5432/zeluvi?schema=public"
    ```
-   Se a senha tiver `@`, `#` ou `/`, troque por `%40`, `%23` ou `%2F`.
+   Se a senha tiver `@`, `#` ou `/`, troque por `%40`, `%23` ou `%2F`, a senha por enquanto é postgres mesmo.
 3. Instale as dependencias e crie as tabelas:
    ```
    npm install
