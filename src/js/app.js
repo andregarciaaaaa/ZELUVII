@@ -432,91 +432,6 @@ const LOGIN_FEATURES = [
 /* ============================================================
    MOCK DATA
    ============================================================ */
-const CATEGORIAS_OCORRENCIA = [
-  { id: "manutencao", label: "Manutenção", icon: Wrench },
-  { id: "limpeza", label: "Limpeza", icon: Sparkles },
-  { id: "elevador", label: "Elevador", icon: ArrowUpDown },
-  { id: "iluminacao", label: "Iluminação", icon: Lightbulb },
-  { id: "portoes", label: "Portões", icon: DoorOpen },
-  { id: "hidraulica", label: "Hidráulica", icon: Droplet },
-  { id: "seguranca", label: "Segurança", icon: ShieldAlert },
-  { id: "outras", label: "Outras", icon: MoreHorizontal },
-];
-
-const STATUS_FLOW = ["Aberta", "Recebida", "Em análise", "Em andamento", "Aguardando", "Resolvida", "Cancelada"];
-
-const STATUS_STYLE = {
-  "Aberta": { bg: C.amberLight, fg: C.amber },
-  "Recebida": { bg: C.infoLight, fg: C.info },
-  "Em análise": { bg: C.infoLight, fg: C.info },
-  "Em andamento": { bg: C.primaryLight, fg: C.primary },
-  "Aguardando": { bg: C.amberLight, fg: C.amber },
-  "Resolvida": { bg: C.primaryLight, fg: C.primaryDark },
-  "Cancelada": { bg: "#EDEFEC", fg: C.textFaint },
-};
-
-let OCORRENCIAS = [
-  { id: "OC-1042", title: "Vazamento no teto da garagem G2", categoria: "hidraulica", descricao: "Infiltração próxima à vaga 34, piorando após chuva.", local: "Garagem - Nível 2", prioridade: "Alta", status: "Em andamento", data: "2026-08-10", morador: "Renata Bittencourt", unidade: "302", timeline: [
-    { status: "Aberta", data: "10/08 09:12", nota: "Ocorrência registrada pelo morador." },
-    { status: "Recebida", data: "10/08 09:40", nota: "Recebida pela administração." },
-    { status: "Em andamento", data: "11/08 14:00", nota: "Equipe hidráulica acionada." },
-  ]},
-  { id: "OC-1041", title: "Lâmpada queimada no corredor do 5º andar", categoria: "iluminacao", descricao: "Corredor ficando escuro à noite.", local: "5º andar - Bloco A", prioridade: "Média", status: "Resolvida", data: "2026-08-08", morador: "Diego Assunção", unidade: "504", timeline: [
-    { status: "Aberta", data: "08/08 18:22", nota: "Ocorrência registrada." },
-    { status: "Em andamento", data: "09/08 08:00", nota: "Manutenção agendada." },
-    { status: "Resolvida", data: "09/08 11:30", nota: "Lâmpada substituída." },
-  ]},
-  { id: "OC-1040", title: "Portão da garagem travando", categoria: "portoes", descricao: "Motor faz ruído estranho ao abrir.", local: "Entrada de veículos", prioridade: "Alta", status: "Aguardando", data: "2026-08-07", morador: "Renata Bittencourt", unidade: "302", timeline: [
-    { status: "Aberta", data: "07/08 07:55", nota: "Ocorrência registrada." },
-    { status: "Recebida", data: "07/08 09:00", nota: "Encaminhada ao prestador." },
-    { status: "Aguardando", data: "07/08 09:05", nota: "Aguardando peça de reposição." },
-  ]},
-  { id: "OC-1039", title: "Interfone da portaria sem áudio", categoria: "manutencao", descricao: "Chamadas caem sem som.", local: "Portaria principal", prioridade: "Média", status: "Recebida", data: "2026-08-12", morador: "Portaria", unidade: "-", timeline: [
-    { status: "Aberta", data: "12/08 07:00", nota: "Registrado pela portaria." },
-    { status: "Recebida", data: "12/08 07:20", nota: "Administração notificada." },
-  ]},
-  { id: "OC-1038", title: "Câmera da piscina fora do ar", categoria: "seguranca", descricao: "Sem sinal desde ontem à noite.", local: "Área da piscina", prioridade: "Alta", status: "Em análise", data: "2026-08-12", morador: "Zeluvi IA", unidade: "-", timeline: [
-    { status: "Aberta", data: "12/08 06:10", nota: "Alerta automático do sistema de câmeras." },
-    { status: "Em análise", data: "12/08 08:00", nota: "Equipe de TI verificando." },
-  ]},
-];
-
-const AREAS_COMUNS = [
-  { id: "salao", nome: "Salão de Festas", icon: PartyPopper, capacidade: "80 pessoas", regras: "Uso até 22h. Limpeza por conta do morador." },
-  { id: "churrasqueira", nome: "Churrasqueira", icon: Flame, capacidade: "30 pessoas", regras: "Reserva mínima de 3h. Levar carvão próprio." },
-  { id: "gourmet", nome: "Espaço Gourmet", icon: UtensilsCrossed, capacidade: "20 pessoas", regras: "Cozinha equipada. Reserva com 48h de antecedência." },
-  { id: "quadra", nome: "Quadra Poliesportiva", icon: Dumbbell, capacidade: "14 pessoas", regras: "Uso de calçado apropriado obrigatório." },
-  { id: "lazer", nome: "Área de Lazer", icon: Trees, capacidade: "40 pessoas", regras: "Silêncio após 21h." },
-  { id: "elevador_servico", nome: "Elevador de Serviço", icon: ArrowUpDown, capacidade: "Mudanças", regras: "Reservar com 24h de antecedência para mudanças." },
-];
-
-const HORARIOS = ["09:00–12:00", "12:00–15:00", "15:00–18:00", "18:00–21:00"];
-
-let RESERVAS = [
-  { id: "R-501", area: "salao", data: "2026-08-15", horario: "18:00–21:00", morador: "Renata Bittencourt", unidade: "302", status: "Confirmada" },
-  { id: "R-502", area: "churrasqueira", data: "2026-08-16", horario: "12:00–15:00", morador: "Diego Assunção", unidade: "504", status: "Confirmada" },
-  { id: "R-503", area: "quadra", data: "2026-08-14", horario: "15:00–18:00", morador: "Fábio Nakamura", unidade: "101", status: "Confirmada" },
-];
-
-let COMUNICADOS = [
-  { id: "CM-88", titulo: "Manutenção preventiva dos elevadores", corpo: "Na quinta-feira, das 9h às 12h, os elevadores do Bloco A passarão por manutenção preventiva. Pedimos que utilizem o Bloco B durante o período.", segmento: "Bloco A", data: "2026-08-12", autor: "Administração", importante: true },
-  { id: "CM-87", titulo: "Assembleia geral ordinária — convocação", corpo: "Convocamos todos os condôminos para a assembleia geral ordinária, dia 30/08 às 19h, no salão de festas, para deliberar sobre o orçamento de 2027.", segmento: "Todos", data: "2026-08-10", autor: "Síndico", importante: true },
-  { id: "CM-86", titulo: "Campanha de descarte consciente", corpo: "A partir deste mês, o condomínio conta com pontos de coleta seletiva no térreo. Participe e ganhe pontos no programa Zeluvi.", segmento: "Todos", data: "2026-08-05", autor: "Administração", importante: false },
-];
-
-let ENTREGAS = [
-  { id: "EN-231", destinatario: "Renata Bittencourt", unidade: "302", transportadora: "Correios", codigo: "BR384710225", recebidoEm: "12/08 14:32", status: "Aguardando retirada", retiradoEm: null },
-  { id: "EN-230", destinatario: "Diego Assunção", unidade: "504", transportadora: "Mercado Envios", codigo: "ME998213", recebidoEm: "12/08 11:05", status: "Aguardando retirada", retiradoEm: null },
-  { id: "EN-229", destinatario: "Fábio Nakamura", unidade: "101", transportadora: "Amazon", codigo: "AMZ00219873", recebidoEm: "11/08 16:40", status: "Retirada", retiradoEm: "11/08 19:12" },
-];
-
-const NOTIFICACOES = [
-  { id: 1, tipo: "ocorrencia", texto: "Ocorrência OC-1040 aguardando peça de reposição.", tempo: "há 2h", lida: false },
-  { id: 2, tipo: "comunicado", texto: "Novo comunicado: Manutenção preventiva dos elevadores.", tempo: "há 5h", lida: false },
-  { id: 3, tipo: "entrega", texto: "Encomenda recebida na portaria — unidade 302.", tempo: "há 1 dia", lida: true },
-  { id: 4, tipo: "reserva", texto: "Reserva do Salão de Festas confirmada para 15/08.", tempo: "há 1 dia", lida: true },
-];
-
 const SAUDE_CATEGORIAS = [
   { label: "Financeiro", score: 82, trend: 1 },
   { label: "Segurança", score: 91, trend: 1 },
@@ -524,24 +439,6 @@ const SAUDE_CATEGORIAS = [
   { label: "Manutenção", score: 68, trend: -1 },
   { label: "Sustentabilidade", score: 74, trend: 1 },
   { label: "Participação", score: 63, trend: -1 },
-];
-
-const FINANCEIRO_MENSAL = [
-  { mes: "Mar", receitas: 148000, despesas: 121000 },
-  { mes: "Abr", receitas: 151000, despesas: 133000 },
-  { mes: "Mai", receitas: 149500, despesas: 128000 },
-  { mes: "Jun", receitas: 153200, despesas: 141000 },
-  { mes: "Jul", receitas: 155800, despesas: 137500 },
-  { mes: "Ago", receitas: 154000, despesas: 129800 },
-];
-
-const DESPESAS_CATEGORIA = [
-  { nome: "Folha / Funcionários", valor: 58000 },
-  { nome: "Manutenção", valor: 22400 },
-  { nome: "Água e energia", valor: 18200 },
-  { nome: "Limpeza", valor: 11600 },
-  { nome: "Segurança", valor: 14300 },
-  { nome: "Administrativo", valor: 5300 },
 ];
 
 const PIE_COLORS = [C.primary, C.info, C.amber, "#7C9A8E", C.danger, C.textFaint];
@@ -608,11 +505,12 @@ const NAV = {
     { id: "dashboard", label: "Dashboard", icon: Home },
     { id: "ocorrencias", label: "Ocorrências", icon: AlertTriangle },
     { id: "reservas", label: "Reservas", icon: Calendar },
-    { id: "comunicados", label: "Comunicados", icon: Megaphone },
-    { id: "entregas", label: "Entregas", icon: Package },
+    { id: "comunicados", label: "Avisos", icon: Megaphone },
+    { id: "entregas", label: "Encomendas", icon: Package },
+    { id: "visitantes", label: "Visitantes", icon: Truck },
     { id: "financeiro", label: "Financeiro", icon: DollarSign },
-    { id: "documentos", label: "Documentos", icon: FileText },
     { id: "comunidade", label: "Comunidade", icon: Users },
+    { id: "documentos", label: "Documentos", icon: FileText },
     { id: "perfil", label: "Meu perfil", icon: UserCircle2 },
   ],
   sindico: [
@@ -621,7 +519,9 @@ const NAV = {
     { id: "financeiro", label: "Financeiro", icon: DollarSign },
     { id: "ocorrencias", label: "Ocorrências", icon: AlertTriangle },
     { id: "reservas", label: "Reservas", icon: Calendar },
-    { id: "comunicados", label: "Comunicados", icon: Megaphone },
+    { id: "comunicados", label: "Avisos", icon: Megaphone },
+    { id: "entregas", label: "Encomendas", icon: Package },
+    { id: "visitantes", label: "Visitantes", icon: Truck },
     { id: "funcionarios", label: "Funcionários", icon: ClipboardList },
     { id: "prestadores", label: "Prestadores", icon: Wrench },
     { id: "manutencao", label: "Manutenção", icon: Settings },
@@ -634,7 +534,7 @@ const NAV = {
   ],
   portaria: [
     { id: "dashboard", label: "Dashboard", icon: Home },
-    { id: "entregas", label: "Entregas", icon: Package },
+    { id: "entregas", label: "Encomendas", icon: Package },
     { id: "visitantes", label: "Visitantes", icon: Truck },
     { id: "ocorrencias", label: "Ocorrências", icon: AlertTriangle },
     { id: "comunicados", label: "Avisos", icon: Megaphone },
@@ -644,10 +544,11 @@ const NAV = {
 
 const ROLE_LABEL = { morador: "Morador", sindico: "Síndico / Administração", portaria: "Portaria" };
 
+// Atalhos da tela de entrada: preenchem o e-mail das contas criadas pelo seed (npm run db:seed no backend)
 const DEMO_USERS = {
-  morador: { name: "Renata Bittencourt", unidade: "302", bloco: "Bloco A", email: "renata@email.com" },
-  sindico: { name: "Marcelo Vieira", unidade: "-", email: "marcelo@zeluvi.com" },
-  portaria: { name: "José Carlos", unidade: "-", email: "portaria@zeluvi.com" },
+  morador: { email: "ana@condominio.com" },
+  sindico: { email: "sindico@condominio.com" },
+  portaria: { email: "portaria@condominio.com" },
 };
 
 /* ============================================================
@@ -1004,7 +905,7 @@ function FeaturesSection() {
         autoPlay muted loop playsInline
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
       >
-        <source src="assets/condominio.mp4" type="video/mp4" />
+        <source src="assets/video/condominio.mp4" type="video/mp4" />
       </video>
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(8,8,9,0.88) 0%, rgba(8,8,9,0.8) 100%)" }} />
 
@@ -1074,12 +975,12 @@ function GoogleG({ size = 18 }) {
 function LoginScreen({ onLogin }) {
   const [role, setRole] = useState("morador");
   const [email, setEmail] = useState(DEMO_USERS.morador.email);
-  const [loginMethod, setLoginMethod] = useState("email"); // "email" | "celular"
-  const [telefone, setTelefone] = useState("");
-  const [nomeCelular, setNomeCelular] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
-  const [authMode, setAuthMode] = useState(null); // null | "entrar" | "cadastro"
-  const [cadastroData, setCadastroData] = useState({ nome: "", email: "", senha: "", condominio: "", bloco: "", unidade: "" });
+  const [authMode, setAuthMode] = useState(null); // null | "entrar" | "cadastro" | "recuperar"
+  const [recEmail, setRecEmail] = useState("");
+  const [recMsg, setRecMsg] = useState("");
   const [ripples, setRipples] = useState([]);
   const heroRef = useRef(null);
 
@@ -1121,39 +1022,30 @@ function LoginScreen({ onLogin }) {
     return () => el.removeEventListener("click", handleClick);
   }, []);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      if (loginMethod === "celular") {
-        onLogin(role, { name: nomeCelular.trim() || `Usuário ${telefone.slice(-4)}`, telefone });
-      } else {
-        onLogin(role, { name: nameFromEmail(email), email });
-      }
+    setLoading(true); setErro("");
+    try {
+      const usuario = await ZeluviAPI.login(email.trim(), senha);
+      onLogin(usuario);
+    } catch (err) {
+      setErro(ZeluviAPI.mensagemDeErro(err));
+    } finally {
       setLoading(false);
-    }, 600);
+    }
   }
 
-  function handleGoogleLogin() {
-    setLoading(true);
-    setTimeout(() => {
-      onLogin(role, { name: nameFromEmail(email), email, viaGoogle: true });
-      setLoading(false);
-    }, 500);
-  }
-
-  function handleCadastroSubmit(e) {
+  async function handleRecuperar(e) {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      const overrides = { name: cadastroData.nome.trim() || nameFromEmail(cadastroData.email), email: cadastroData.email };
-      if (role === "morador") {
-        overrides.unidade = cadastroData.unidade.trim() || DEMO_USERS.morador.unidade;
-        overrides.bloco = cadastroData.bloco.trim() || DEMO_USERS.morador.bloco;
-      }
-      onLogin(role, overrides);
+    setLoading(true); setRecMsg("");
+    try {
+      const r = await ZeluviAPI.esqueciSenha(recEmail.trim());
+      setRecMsg(r.mensagem);
+    } catch (err) {
+      setRecMsg(ZeluviAPI.mensagemDeErro(err));
+    } finally {
       setLoading(false);
-    }, 600);
+    }
   }
 
   return (
@@ -1244,114 +1136,64 @@ function LoginScreen({ onLogin }) {
       <FeaturesSection />
 
       <Modal open={authMode === "entrar"} onClose={() => setAuthMode(null)} title="Entrar na plataforma" width={420}>
-        <div style={{ fontSize: 13.5, color: C.textMuted, marginBottom: 20 }}>Selecione seu perfil de demonstração para explorar o Zeluvi.</div>
-        <RoleTabs role={role} setRole={setRole} />
-
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          disabled={loading}
-          style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "10px 16px", borderRadius: 9, border: `1px solid ${C.borderStrong}`, background: "#fff", color: C.ink, fontSize: 13.5, fontWeight: 600, cursor: "pointer", marginBottom: 16 }}
-        >
-          <GoogleG size={17} /> Continuar com Google
-        </button>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "4px 0 18px", fontSize: 12, color: C.textFaint }}>
-          <div style={{ flex: 1, height: 1, background: C.border }} />
-          ou entre com e-mail ou celular
-          <div style={{ flex: 1, height: 1, background: C.border }} />
-        </div>
-
-        <div style={{ display: "flex", gap: 8, marginBottom: 16, background: C.bg, padding: 4, borderRadius: 11 }}>
-          <button type="button" onClick={() => setLoginMethod("email")} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 6px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 12.5, fontWeight: 600, background: loginMethod === "email" ? C.surface : "transparent", color: loginMethod === "email" ? C.primary : C.textMuted, boxShadow: loginMethod === "email" ? "0 1px 4px rgba(15,33,27,0.12)" : "none" }}>
-            <Mail size={13} /> E-mail
-          </button>
-          <button type="button" onClick={() => setLoginMethod("celular")} style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 6px", borderRadius: 8, border: "none", cursor: "pointer", fontSize: 12.5, fontWeight: 600, background: loginMethod === "celular" ? C.surface : "transparent", color: loginMethod === "celular" ? C.primary : C.textMuted, boxShadow: loginMethod === "celular" ? "0 1px 4px rgba(15,33,27,0.12)" : "none" }}>
-            <Smartphone size={13} /> Celular
-          </button>
-        </div>
-
+        <div style={{ fontSize: 13.5, color: C.textMuted, marginBottom: 16 }}>Entre com o e-mail e a senha do seu cadastro. O perfil (morador, síndico ou portaria) é reconhecido automaticamente.</div>
         <form onSubmit={handleSubmit}>
-          {loginMethod === "email" ? (
-            <Field label="E-mail">
-              <input style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
-            </Field>
-          ) : (
-            <>
-              <Field label="Seu nome">
-                <input style={inputStyle} value={nomeCelular} onChange={(e) => setNomeCelular(e.target.value)} type="text" placeholder="Como devemos te chamar" />
-              </Field>
-              <Field label="Número de celular">
-                <input style={inputStyle} value={telefone} onChange={(e) => setTelefone(formatTelefone(e.target.value))} type="tel" placeholder="(11) 91234-5678" />
-              </Field>
-            </>
-          )}
-          <Field label="Senha">
-            <input style={inputStyle} type="password" defaultValue="••••••••" />
+          <Field label="E-mail">
+            <input style={inputStyle} value={email} onChange={(e) => setEmail(e.target.value)} type="email" autoComplete="username" required />
           </Field>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 22, fontSize: 13 }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 7, color: C.textMuted, cursor: "pointer" }}>
-              <input type="checkbox" defaultChecked /> Lembrar acesso
-            </label>
-            <a href="#" onClick={(e) => e.preventDefault()} style={{ color: C.primary, fontWeight: 600, textDecoration: "none" }}>Esqueci minha senha</a>
+          <Field label="Senha">
+            <input style={inputStyle} type="password" value={senha} onChange={(e) => setSenha(e.target.value)} autoComplete="current-password" required />
+          </Field>
+          {erro && (
+            <div role="alert" style={{ marginBottom: 14, padding: "10px 12px", borderRadius: 9, background: C.dangerLight, color: C.danger, fontSize: 13 }}>{erro}</div>
+          )}
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 18, fontSize: 13 }}>
+            <a href="#" onClick={(e) => { e.preventDefault(); setRecEmail(email); setRecMsg(""); setAuthMode("recuperar"); }} style={{ color: C.primary, fontWeight: 600, textDecoration: "none" }}>Esqueci minha senha</a>
           </div>
           <Button type="submit" style={{ width: "100%", padding: "11px 16px" }} disabled={loading}>
             {loading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : null}
-            {loading ? "Entrando..." : `Entrar como ${ROLE_LABEL[role]}`}
+            {loading ? "Entrando..." : "Entrar"}
           </Button>
         </form>
         <div style={{ marginTop: 18, fontSize: 13, color: C.textMuted, textAlign: "center" }}>
           Ainda não tem conta?{" "}
           <a href="#" onClick={(e) => { e.preventDefault(); setAuthMode("cadastro"); }} style={{ color: C.primary, fontWeight: 600, textDecoration: "none" }}>
-            Cadastre-se
+            Como me cadastro?
           </a>
         </div>
         <div style={{ marginTop: 16, padding: 14, borderRadius: 10, background: C.primaryLight, fontSize: 12.5, color: C.primaryDark, lineHeight: 1.5 }}>
-          Ambiente de demonstração — os dados exibidos são fictícios e servem apenas para ilustrar a experiência do Zeluvi.
+          <div style={{ fontWeight: 700, marginBottom: 8 }}>Contas de demonstração (ambiente de desenvolvimento)</div>
+          <RoleTabs role={role} setRole={(r) => { setRole(r); setSenha("123456"); }} />
+          <div>Clique no perfil para preencher o e-mail e a senha de teste.</div>
         </div>
       </Modal>
 
-      <Modal open={authMode === "cadastro"} onClose={() => setAuthMode(null)} title="Criar conta no Zeluvi" width={440}>
-        <div style={{ fontSize: 13.5, color: C.textMuted, marginBottom: 20 }}>Leva menos de 1 minuto. Escolha o perfil que melhor te descreve.</div>
-        <RoleTabs role={role} setRole={setRole} />
-        <form onSubmit={handleCadastroSubmit}>
-          <Field label="Nome completo">
-            <input style={inputStyle} value={cadastroData.nome} onChange={(e) => setCadastroData((d) => ({ ...d, nome: e.target.value }))} type="text" placeholder="Seu nome" required />
-          </Field>
+      <Modal open={authMode === "recuperar"} onClose={() => setAuthMode(null)} title="Recuperar senha" width={420}>
+        <div style={{ fontSize: 13.5, color: C.textMuted, marginBottom: 16 }}>Informe o e-mail do seu cadastro. Se ele existir, enviaremos um link para criar uma nova senha (vale 30 minutos).</div>
+        <form onSubmit={handleRecuperar}>
           <Field label="E-mail">
-            <input style={inputStyle} value={cadastroData.email} onChange={(e) => setCadastroData((d) => ({ ...d, email: e.target.value }))} type="email" placeholder="voce@email.com" required />
+            <input style={inputStyle} value={recEmail} onChange={(e) => setRecEmail(e.target.value)} type="email" required />
           </Field>
-          <Field label="Condomínio">
-            <input style={inputStyle} value={cadastroData.condominio} onChange={(e) => setCadastroData((d) => ({ ...d, condominio: e.target.value }))} type="text" placeholder="Nome do condomínio" />
-          </Field>
-          {role === "morador" && (
-            <div style={{ display: "flex", gap: 12 }}>
-              <div style={{ flex: 1 }}>
-                <Field label="Bloco / Torre">
-                  <input style={inputStyle} value={cadastroData.bloco} onChange={(e) => setCadastroData((d) => ({ ...d, bloco: e.target.value }))} type="text" placeholder="Ex: Bloco A" required />
-                </Field>
-              </div>
-              <div style={{ flex: 1 }}>
-                <Field label="Unidade">
-                  <input style={inputStyle} value={cadastroData.unidade} onChange={(e) => setCadastroData((d) => ({ ...d, unidade: e.target.value }))} type="text" placeholder="Ex: 302" required />
-                </Field>
-              </div>
-            </div>
-          )}
-          <Field label="Senha">
-            <input style={inputStyle} value={cadastroData.senha} onChange={(e) => setCadastroData((d) => ({ ...d, senha: e.target.value }))} type="password" placeholder="Crie uma senha" required />
-          </Field>
-          <Button type="submit" style={{ width: "100%", padding: "11px 16px", marginTop: 8 }} disabled={loading}>
-            {loading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : null}
-            {loading ? "Criando conta..." : "Criar conta gratuita"}
+          {recMsg && <div role="status" style={{ marginBottom: 14, padding: "10px 12px", borderRadius: 9, background: C.infoLight, color: C.info, fontSize: 13 }}>{recMsg}</div>}
+          <Button type="submit" style={{ width: "100%", padding: "11px 16px" }} disabled={loading}>
+            {loading ? "Enviando..." : "Enviar link de recuperação"}
           </Button>
         </form>
-        <div style={{ marginTop: 18, fontSize: 13, color: C.textMuted, textAlign: "center" }}>
-          Já tem uma conta?{" "}
-          <a href="#" onClick={(e) => { e.preventDefault(); setAuthMode("entrar"); }} style={{ color: C.primary, fontWeight: 600, textDecoration: "none" }}>
-            Entrar
-          </a>
+        <div style={{ marginTop: 16, fontSize: 13, textAlign: "center" }}>
+          <a href="#" onClick={(e) => { e.preventDefault(); setAuthMode("entrar"); }} style={{ color: C.primary, fontWeight: 600, textDecoration: "none" }}>Voltar para o login</a>
         </div>
+      </Modal>
+
+      <Modal open={authMode === "cadastro"} onClose={() => setAuthMode(null)} title="Como criar sua conta" width={440}>
+        <div style={{ fontSize: 14, color: C.ink, lineHeight: 1.6, marginBottom: 14 }}>
+          No Zeluvi o cadastro <strong>não é aberto ao público</strong>: quem cadastra os moradores é o síndico do seu condomínio (e síndicos e porteiros são cadastrados por outro síndico).
+        </div>
+        <ol style={{ margin: "0 0 16px 18px", padding: 0, fontSize: 13.5, color: C.textMuted, lineHeight: 1.7 }}>
+          <li>Peça ao síndico para cadastrar o seu e-mail e a sua unidade.</li>
+          <li>Você recebe um e-mail de convite (vale 48 horas).</li>
+          <li>Abra o link e crie a sua própria senha.</li>
+        </ol>
+        <Button variant="outline" style={{ width: "100%" }} onClick={() => setAuthMode("entrar")}>Já recebi o convite — entrar</Button>
       </Modal>
     </div>
   );
@@ -1479,682 +1321,6 @@ function Topbar({ user, role, onLogout, setMobileOpen, notifOpen, setNotifOpen, 
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ============================================================
-   PAGE: DASHBOARD — MORADOR
-   ============================================================ */
-function DashboardMorador({ user, setPage, ocorrencias, reservas, comunicados, entregas }) {
-  const minhasOcorrencias = ocorrencias.filter((o) => o.morador === user.name);
-  const minhasReservas = reservas.filter((r) => r.morador === user.name);
-  const emAndamento = minhasOcorrencias.filter((o) => !["Resolvida", "Cancelada"].includes(o.status));
-
-  return (
-    <div className="fade-up">
-      <Card style={{ background: C.ink, color: "#fff", marginBottom: 20, border: "none" }}>
-        <div style={{ fontFamily: FONT_DISPLAY, fontSize: 22, fontWeight: 600 }}>Olá, {user.name.split(" ")[0]} 👋</div>
-        <div style={{ fontSize: 13.5, color: "rgba(255,255,255,0.65)", marginTop: 4 }}>Unidade {user.unidade} · {user.bloco}</div>
-      </Card>
-
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 20 }}>
-        <StatCard icon={AlertTriangle} label="Solicitações em andamento" value={emAndamento.length} accent={C.amber} />
-        <StatCard icon={Calendar} label="Próxima reserva" value={minhasReservas[0] ? minhasReservas[0].data.slice(8, 10) + "/" + minhasReservas[0].data.slice(5, 7) : "—"} accent={C.primary} />
-        <StatCard icon={Package} label="Encomendas aguardando" value={entregas.filter((e) => e.unidade === user.unidade && e.status !== "Retirada").length} accent={C.info} />
-        <StatCard icon={DollarSign} label="Situação financeira" value="Em dia" accent={C.primary} />
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }} className="grid-stack">
-        <Card>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 4 }}>Acesso rápido</div>
-          <div style={{ fontSize: 12.5, color: C.textMuted, marginBottom: 16 }}>O que você precisa está a um clique.</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }} className="quick-grid">
-            {[
-              { label: "Nova ocorrência", icon: AlertTriangle, page: "ocorrencias" },
-              { label: "Reservar área", icon: Calendar, page: "reservas" },
-              { label: "Ver comunicados", icon: Megaphone, page: "comunicados" },
-              { label: "Entregas", icon: Package, page: "entregas" },
-              { label: "Financeiro", icon: DollarSign, page: "financeiro" },
-              { label: "Documentos", icon: FileText, page: "documentos" },
-              { label: "Comunidade", icon: Users, page: "comunidade" },
-              { label: "Meu perfil", icon: UserCircle2, page: "perfil" },
-            ].map((a) => (
-              <button key={a.label} onClick={() => setPage(a.page)} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 10, padding: 14, borderRadius: 12, border: `1px solid ${C.border}`, background: C.bg, cursor: "pointer", textAlign: "left" }}>
-                <a.icon size={18} color={C.primary} />
-                <span style={{ fontSize: 12.5, fontWeight: 600, color: C.ink }}>{a.label}</span>
-              </button>
-            ))}
-          </div>
-        </Card>
-
-        <Card>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 12 }}>Últimos comunicados</div>
-          {comunicados.slice(0, 3).map((c) => (
-            <div key={c.id} style={{ paddingBottom: 12, marginBottom: 12, borderBottom: `1px solid ${C.border}` }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 4 }}>
-                {c.importante && <Badge bg={C.dangerLight} fg={C.danger}>Importante</Badge>}
-                <span style={{ fontSize: 11, color: C.textFaint }}>{c.data.slice(8, 10)}/{c.data.slice(5, 7)}</span>
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: C.ink }}>{c.titulo}</div>
-            </div>
-          ))}
-          <Button variant="ghost" style={{ padding: "6px 0" }} onClick={() => setPage("comunicados")}>Ver todos <ChevronRight size={14} /></Button>
-        </Card>
-      </div>
-
-      <div style={{ marginTop: 16 }}>
-        <Card>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 12 }}>Minhas solicitações em andamento</div>
-          {emAndamento.length === 0 ? (
-            <EmptyState icon={CheckCircle2} title="Nenhuma solicitação em andamento" desc="Você não possui ocorrências ou solicitações pendentes no momento." />
-          ) : (
-            emAndamento.map((o) => (
-              <div key={o.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: `1px solid ${C.border}` }}>
-                <Badge bg={STATUS_STYLE[o.status].bg} fg={STATUS_STYLE[o.status].fg}>{o.status}</Badge>
-                <div style={{ flex: 1, fontSize: 13.5, color: C.ink, fontWeight: 500 }}>{o.title}</div>
-                <span style={{ fontSize: 11.5, color: C.textFaint, fontFamily: FONT_MONO }}>{o.id}</span>
-              </div>
-            ))
-          )}
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
-   PAGE: DASHBOARD — SÍNDICO
-   ============================================================ */
-function DashboardSindico({ setPage, ocorrencias }) {
-  const abertas = ocorrencias.filter((o) => o.status === "Aberta").length;
-  const andamento = ocorrencias.filter((o) => o.status === "Em andamento").length;
-
-  return (
-    <div className="fade-up">
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 16 }}>
-        <StatCard icon={Users} label="Total de moradores" value="124" trend={1} trendLabel="+2" accent={C.info} />
-        <StatCard icon={AlertTriangle} label="Ocorrências abertas" value={abertas} accent={C.amber} />
-        <StatCard icon={Wrench} label="Em andamento" value={andamento} accent={C.primary} />
-        <StatCard icon={Calendar} label="Reservas hoje" value={RESERVAS.filter((r) => r.data === "2026-08-14").length} accent={C.info} />
-        <StatCard icon={Package} label="Entregas pendentes" value={ENTREGAS.filter((e) => e.status !== "Retirada").length} accent={C.amber} />
-        <StatCard icon={DollarSign} label="Inadimplência" value="4,8%" trend={-1} trendLabel="-0,3pp" accent={C.primary} />
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1.4fr", gap: 16, marginBottom: 16 }} className="grid-stack">
-        <Card>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 2 }}>Índice de Saúde do Condomínio</div>
-          <div style={{ fontSize: 12.5, color: C.textMuted, marginBottom: 8 }}>O "Anel de Zelo" resume 6 dimensões da gestão.</div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <AnelDeZelo categorias={SAUDE_CATEGORIAS} size={260} />
-          </div>
-        </Card>
-        <Card>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: C.ink }}>Receitas x Despesas</div>
-            <Badge bg={C.primaryLight} fg={C.primaryDark}>Últimos 6 meses</Badge>
-          </div>
-          <div style={{ marginTop: 12 }}>
-            <AreaChartSVG
-              data={FINANCEIRO_MENSAL}
-              xKey="mes"
-              height={220}
-              formatValue={fmtBRL}
-              series={[
-                { key: "receitas", label: "Receitas", color: C.primary },
-                { key: "despesas", label: "Despesas", color: C.amber },
-              ]}
-            />
-          </div>
-        </Card>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1.1fr", gap: 16 }} className="grid-stack">
-        <Card>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: C.ink }}>Alertas da IA Gestora</div>
-            <Badge bg={C.dangerLight} fg={C.danger}>{ALERTAS_IA.filter((a) => a.prioridade === "Alta").length} críticos</Badge>
-          </div>
-          {ALERTAS_IA.map((a) => {
-            const pStyle = a.prioridade === "Alta" ? { bg: C.dangerLight, fg: C.danger } : a.prioridade === "Média" ? { bg: C.amberLight, fg: C.amber } : { bg: C.infoLight, fg: C.info };
-            return (
-              <div key={a.titulo} style={{ padding: "12px 0", borderBottom: `1px solid ${C.border}` }}>
-                <div style={{ display: "flex", justifyContent: "space-between", gap: 10 }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: C.ink }}>{a.titulo}</div>
-                  <Badge bg={pStyle.bg} fg={pStyle.fg} style={{ flexShrink: 0 }}>{a.prioridade}</Badge>
-                </div>
-                <div style={{ fontSize: 12.5, color: C.textMuted, marginTop: 4, lineHeight: 1.5 }}>{a.desc}</div>
-                <div style={{ fontSize: 12, color: C.primaryDark, marginTop: 6, display: "flex", gap: 6, alignItems: "flex-start" }}>
-                  <Sparkles size={13} style={{ marginTop: 2, flexShrink: 0 }} /> {a.recomendacao}
-                </div>
-              </div>
-            );
-          })}
-        </Card>
-
-        <Card style={{ background: `linear-gradient(160deg, ${C.ink} 0%, #17352B 100%)`, color: "#fff", border: "none", display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-            <div style={{ width: 32, height: 32, borderRadius: 9, background: "rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Bot size={17} />
-            </div>
-            <div style={{ fontFamily: FONT_DISPLAY, fontSize: 16, fontWeight: 600 }}>Copiloto Zeluvi</div>
-          </div>
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.7)", lineHeight: 1.6, marginBottom: 16 }}>
-            Pergunte sobre ocorrências, contratos, finanças ou manutenção e receba um resumo executivo com recomendações.
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
-            {QUICK_QUESTIONS.slice(0, 3).map((q) => (
-              <div key={q} style={{ fontSize: 12.5, padding: "9px 12px", borderRadius: 9, background: "rgba(255,255,255,0.08)" }}>{q}</div>
-            ))}
-          </div>
-          <Button onClick={() => setPage("copiloto")} style={{ background: "#fff", color: C.ink, marginTop: "auto" }} icon={MessageSquare}>Abrir copiloto</Button>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
-   PAGE: DASHBOARD — PORTARIA
-   ============================================================ */
-function DashboardPortaria({ setPage, entregas }) {
-  const pendentes = entregas.filter((e) => e.status !== "Retirada");
-  return (
-    <div className="fade-up">
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 16 }}>
-        <StatCard icon={Package} label="Encomendas aguardando retirada" value={pendentes.length} accent={C.amber} />
-        <StatCard icon={Truck} label="Visitantes hoje" value="9" accent={C.info} />
-        <StatCard icon={AlertTriangle} label="Ocorrências abertas" value={OCORRENCIAS.filter((o) => o.status === "Aberta" || o.status === "Recebida").length} accent={C.danger} />
-        <StatCard icon={Calendar} label="Reservas hoje" value={RESERVAS.filter((r) => r.data === "2026-08-14").length} accent={C.primary} />
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 16 }} className="grid-stack">
-        <Card>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: C.ink }}>Encomendas recentes</div>
-            <Button icon={Plus} onClick={() => setPage("entregas")}>Registrar</Button>
-          </div>
-          {entregas.slice(0, 5).map((e) => (
-            <div key={e.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: `1px solid ${C.border}` }}>
-              <div style={{ width: 34, height: 34, borderRadius: 9, background: C.infoLight, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <Package size={16} color={C.info} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: C.ink }}>{e.destinatario} · Un. {e.unidade}</div>
-                <div style={{ fontSize: 11.5, color: C.textFaint }}>{e.transportadora} · {e.recebidoEm}</div>
-              </div>
-              <Badge bg={e.status === "Retirada" ? C.primaryLight : C.amberLight} fg={e.status === "Retirada" ? C.primaryDark : C.amber}>{e.status}</Badge>
-            </div>
-          ))}
-        </Card>
-        <Card>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 12 }}>Reservas de hoje</div>
-          {RESERVAS.filter((r) => r.data === "2026-08-14").length === 0 ? (
-            <EmptyState icon={Calendar} title="Sem reservas hoje" desc="Nenhuma área comum foi reservada para hoje." />
-          ) : (
-            RESERVAS.filter((r) => r.data === "2026-08-14").map((r) => {
-              const area = AREAS_COMUNS.find((a) => a.id === r.area);
-              return (
-                <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 0", borderBottom: `1px solid ${C.border}` }}>
-                  {area && <area.icon size={16} color={C.primary} />}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: C.ink }}>{area?.nome}</div>
-                    <div style={{ fontSize: 11.5, color: C.textFaint }}>{r.horario} · Un. {r.unidade}</div>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
-   PAGE: OCORRÊNCIAS
-   ============================================================ */
-function OcorrenciasPage({ role, user, ocorrencias, setOcorrencias, showToast }) {
-  const [filtro, setFiltro] = useState("Todas");
-  const [novaOpen, setNovaOpen] = useState(false);
-  const [detalhe, setDetalhe] = useState(null);
-  const [form, setForm] = useState({ title: "", categoria: "manutencao", descricao: "", local: "", prioridade: "Média" });
-
-  const visiveis = role === "morador" ? ocorrencias.filter((o) => o.morador === user.name) : ocorrencias;
-  const filtradas = filtro === "Todas" ? visiveis : visiveis.filter((o) => o.status === filtro);
-
-  function criarOcorrencia(e) {
-    e.preventDefault();
-    const id = "OC-" + (1043 + ocorrencias.length);
-    const nova = {
-      id, title: form.title, categoria: form.categoria, descricao: form.descricao, local: form.local,
-      prioridade: form.prioridade, status: "Aberta", data: "2026-08-14", morador: user.name, unidade: user.unidade,
-      timeline: [{ status: "Aberta", data: "14/08 " + new Date().toTimeString().slice(0, 5), nota: "Ocorrência registrada pelo morador." }],
-    };
-    setOcorrencias([nova, ...ocorrencias]);
-    setNovaOpen(false);
-    setForm({ title: "", categoria: "manutencao", descricao: "", local: "", prioridade: "Média" });
-    showToast("Ocorrência registrada com sucesso.");
-  }
-
-  function avancarStatus(oc) {
-    const idx = STATUS_FLOW.indexOf(oc.status);
-    const proximo = STATUS_FLOW[Math.min(idx + 1, STATUS_FLOW.length - 2)];
-    const atualizado = {
-      ...oc, status: proximo,
-      timeline: [...oc.timeline, { status: proximo, data: "14/08 " + new Date().toTimeString().slice(0, 5), nota: `Status atualizado para "${proximo}" pela administração.` }],
-    };
-    setOcorrencias(ocorrencias.map((o) => (o.id === oc.id ? atualizado : o)));
-    setDetalhe(atualizado);
-    showToast(`Status de ${oc.id} atualizado para "${proximo}".`);
-  }
-
-  return (
-    <div className="fade-up">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {["Todas", ...STATUS_FLOW].map((s) => (
-            <button key={s} onClick={() => setFiltro(s)} style={{
-              padding: "7px 13px", borderRadius: 999, fontSize: 12.5, fontWeight: 600, cursor: "pointer",
-              border: `1px solid ${filtro === s ? C.primary : C.border}`,
-              background: filtro === s ? C.primary : C.surface, color: filtro === s ? "#fff" : C.textMuted,
-            }}>{s}</button>
-          ))}
-        </div>
-        {role !== "portaria" && <Button icon={Plus} onClick={() => setNovaOpen(true)}>Nova ocorrência</Button>}
-      </div>
-
-      {filtradas.length === 0 ? (
-        <Card><EmptyState icon={CheckCircle2} title="Nenhuma ocorrência encontrada" desc="Não há ocorrências para este filtro no momento." /></Card>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {filtradas.map((o) => {
-            const cat = CATEGORIAS_OCORRENCIA.find((c) => c.id === o.categoria);
-            return (
-              <Card key={o.id} style={{ cursor: "pointer" }}>
-                <div onClick={() => setDetalhe(o)} style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
-                  <div style={{ width: 38, height: 38, borderRadius: 10, background: C.primaryLight, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    {cat && <cat.icon size={17} color={C.primary} />}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 4 }}>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: C.ink }}>{o.title}</span>
-                      {o.prioridade === "Alta" && <Badge bg={C.dangerLight} fg={C.danger}>Prioridade alta</Badge>}
-                    </div>
-                    <div style={{ fontSize: 12.5, color: C.textMuted, display: "flex", gap: 14, flexWrap: "wrap" }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: 4 }}><MapPin size={12} /> {o.local}</span>
-                      <span style={{ display: "flex", alignItems: "center", gap: 4 }}><Clock size={12} /> {o.data.slice(8, 10)}/{o.data.slice(5, 7)}</span>
-                      {role !== "morador" && <span>{o.morador} · Un. {o.unidade}</span>}
-                    </div>
-                  </div>
-                  <Badge bg={STATUS_STYLE[o.status].bg} fg={STATUS_STYLE[o.status].fg}>{o.status}</Badge>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      )}
-
-      <Modal open={novaOpen} onClose={() => setNovaOpen(false)} title="Nova ocorrência">
-        <form onSubmit={criarOcorrencia}>
-          <Field label="Título">
-            <input required style={inputStyle} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Ex: Vazamento no corredor" />
-          </Field>
-          <Field label="Categoria">
-            <select style={inputStyle} value={form.categoria} onChange={(e) => setForm({ ...form, categoria: e.target.value })}>
-              {CATEGORIAS_OCORRENCIA.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
-            </select>
-          </Field>
-          <Field label="Localização">
-            <input required style={inputStyle} value={form.local} onChange={(e) => setForm({ ...form, local: e.target.value })} placeholder="Ex: 3º andar, corredor" />
-          </Field>
-          <Field label="Prioridade">
-            <select style={inputStyle} value={form.prioridade} onChange={(e) => setForm({ ...form, prioridade: e.target.value })}>
-              <option>Baixa</option><option>Média</option><option>Alta</option>
-            </select>
-          </Field>
-          <Field label="Descrição">
-            <textarea required style={{ ...inputStyle, minHeight: 90, resize: "vertical" }} value={form.descricao} onChange={(e) => setForm({ ...form, descricao: e.target.value })} placeholder="Descreva o problema com detalhes..." />
-          </Field>
-          <div style={{ fontSize: 12, color: C.textFaint, marginBottom: 16, display: "flex", alignItems: "center", gap: 6 }}>
-            <FileText size={13} /> Anexar fotos estará disponível em breve.
-          </div>
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <Button variant="outline" onClick={() => setNovaOpen(false)} type="button">Cancelar</Button>
-            <Button type="submit">Registrar ocorrência</Button>
-          </div>
-        </form>
-      </Modal>
-
-      <Modal open={!!detalhe} onClose={() => setDetalhe(null)} title={detalhe?.id} width={560}>
-        {detalhe && (
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10, marginBottom: 12 }}>
-              <div style={{ fontFamily: FONT_DISPLAY, fontSize: 18, fontWeight: 600, color: C.ink }}>{detalhe.title}</div>
-              <Badge bg={STATUS_STYLE[detalhe.status].bg} fg={STATUS_STYLE[detalhe.status].fg}>{detalhe.status}</Badge>
-            </div>
-            <div style={{ fontSize: 13.5, color: C.textMuted, lineHeight: 1.6, marginBottom: 16 }}>{detalhe.descricao}</div>
-            <div style={{ display: "flex", gap: 18, flexWrap: "wrap", fontSize: 12.5, color: C.textMuted, marginBottom: 20 }}>
-              <span><strong style={{ color: C.ink }}>Local:</strong> {detalhe.local}</span>
-              <span><strong style={{ color: C.ink }}>Prioridade:</strong> {detalhe.prioridade}</span>
-              <span><strong style={{ color: C.ink }}>Morador:</strong> {detalhe.morador} (Un. {detalhe.unidade})</span>
-            </div>
-            <div style={{ fontWeight: 700, fontSize: 13.5, color: C.ink, marginBottom: 10 }}>Linha do tempo</div>
-            <div style={{ marginBottom: 20 }}>
-              {detalhe.timeline.map((t, i) => (
-                <div key={i} style={{ display: "flex", gap: 12 }}>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <div style={{ width: 9, height: 9, borderRadius: 999, background: C.primary, marginTop: 4 }} />
-                    {i < detalhe.timeline.length - 1 && <div style={{ width: 1.5, flex: 1, background: C.border, minHeight: 24 }} />}
-                  </div>
-                  <div style={{ paddingBottom: 16 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: C.ink }}>{t.status} <span style={{ color: C.textFaint, fontWeight: 400, fontSize: 11.5 }}>· {t.data}</span></div>
-                    <div style={{ fontSize: 12.5, color: C.textMuted, marginTop: 2 }}>{t.nota}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {role !== "morador" && !["Resolvida", "Cancelada"].includes(detalhe.status) && (
-              <Button onClick={() => avancarStatus(detalhe)} icon={CheckCircle2}>Avançar status</Button>
-            )}
-          </div>
-        )}
-      </Modal>
-    </div>
-  );
-}
-
-/* ============================================================
-   PAGE: RESERVAS
-   ============================================================ */
-function ReservasPage({ role, user, reservas, setReservas, showToast }) {
-  const [areaModal, setAreaModal] = useState(null);
-  const [data, setData] = useState("2026-08-15");
-  const [horario, setHorario] = useState(HORARIOS[0]);
-
-  const listaBase = role === "morador" ? reservas.filter((r) => r.morador === user.name) : reservas;
-
-  function ocupado(areaId, d, h) {
-    return reservas.some((r) => r.area === areaId && r.data === d && r.horario === h);
-  }
-
-  function confirmarReserva() {
-    if (ocupado(areaModal.id, data, horario)) { showToast("Este horário já está reservado."); return; }
-    const nova = { id: "R-" + Math.floor(500 + Math.random() * 400), area: areaModal.id, data, horario, morador: user.name, unidade: user.unidade, status: "Confirmada" };
-    setReservas([nova, ...reservas]);
-    setAreaModal(null);
-    showToast(`Reserva de ${areaModal.nome} confirmada para ${data.slice(8, 10)}/${data.slice(5, 7)}.`);
-  }
-
-  return (
-    <div className="fade-up">
-      <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 12 }}>Áreas comuns</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 24 }} className="area-grid">
-        {AREAS_COMUNS.map((a) => (
-          <Card key={a.id} style={{ cursor: role !== "portaria" ? "pointer" : "default" }}>
-            <div onClick={() => role !== "portaria" && setAreaModal(a)}>
-              <div style={{ width: 38, height: 38, borderRadius: 10, background: C.primaryLight, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
-                <a.icon size={18} color={C.primary} />
-              </div>
-              <div style={{ fontWeight: 700, fontSize: 14, color: C.ink, marginBottom: 4 }}>{a.nome}</div>
-              <div style={{ fontSize: 12, color: C.textMuted, marginBottom: 10 }}>{a.capacidade}</div>
-              <div style={{ fontSize: 11.5, color: C.textFaint, lineHeight: 1.5 }}>{a.regras}</div>
-              {role !== "portaria" && <Button variant="outline" style={{ marginTop: 12, width: "100%" }} icon={Calendar}>Reservar</Button>}
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 12 }}>{role === "morador" ? "Minhas reservas" : "Todas as reservas"}</div>
-      {listaBase.length === 0 ? (
-        <Card><EmptyState icon={Calendar} title="Nenhuma reserva encontrada" desc="Ainda não há reservas registradas para este perfil." /></Card>
-      ) : (
-        <Card padded={false}>
-          {listaBase.map((r, i) => {
-            const area = AREAS_COMUNS.find((a) => a.id === r.area);
-            return (
-              <div key={r.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 20px", borderBottom: i < listaBase.length - 1 ? `1px solid ${C.border}` : "none" }}>
-                {area && <area.icon size={18} color={C.primary} />}
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: C.ink }}>{area?.nome}</div>
-                  <div style={{ fontSize: 12, color: C.textMuted }}>{r.data.slice(8, 10)}/{r.data.slice(5, 7)}/{r.data.slice(0, 4)} · {r.horario}{role !== "morador" ? ` · ${r.morador} (Un. ${r.unidade})` : ""}</div>
-                </div>
-                <Badge bg={C.primaryLight} fg={C.primaryDark}>{r.status}</Badge>
-              </div>
-            );
-          })}
-        </Card>
-      )}
-
-      <Modal open={!!areaModal} onClose={() => setAreaModal(null)} title={`Reservar ${areaModal?.nome || ""}`}>
-        <Field label="Data">
-          <input type="date" style={inputStyle} value={data} onChange={(e) => setData(e.target.value)} min="2026-08-14" />
-        </Field>
-        <Field label="Horário">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            {HORARIOS.map((h) => {
-              const occ = areaModal && ocupado(areaModal.id, data, h);
-              return (
-                <button key={h} disabled={occ} onClick={() => setHorario(h)} style={{
-                  padding: "10px 8px", borderRadius: 9, fontSize: 12.5, fontWeight: 600, cursor: occ ? "not-allowed" : "pointer",
-                  border: `1px solid ${horario === h ? C.primary : C.borderStrong}`,
-                  background: occ ? "#F1F1EF" : horario === h ? C.primaryLight : "#fff",
-                  color: occ ? C.textFaint : horario === h ? C.primaryDark : C.ink,
-                  textDecoration: occ ? "line-through" : "none",
-                }}>{h}{occ ? " · ocupado" : ""}</button>
-              );
-            })}
-          </div>
-        </Field>
-        {areaModal && <div style={{ fontSize: 12, color: C.textMuted, background: C.bg, padding: 12, borderRadius: 9, marginBottom: 16, lineHeight: 1.5 }}>{areaModal.regras}</div>}
-        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-          <Button variant="outline" onClick={() => setAreaModal(null)}>Cancelar</Button>
-          <Button onClick={confirmarReserva}>Confirmar reserva</Button>
-        </div>
-      </Modal>
-    </div>
-  );
-}
-
-/* ============================================================
-   PAGE: COMUNICADOS
-   ============================================================ */
-function ComunicadosPage({ role, comunicados, setComunicados, showToast }) {
-  const [novoOpen, setNovoOpen] = useState(false);
-  const [form, setForm] = useState({ titulo: "", corpo: "", segmento: "Todos", importante: false });
-
-  function publicar(e) {
-    e.preventDefault();
-    const novo = { id: "CM-" + Math.floor(89 + Math.random() * 10), titulo: form.titulo, corpo: form.corpo, segmento: form.segmento, data: "2026-08-14", autor: role === "sindico" ? "Síndico" : "Portaria", importante: form.importante };
-    setComunicados([novo, ...comunicados]);
-    setNovoOpen(false);
-    setForm({ titulo: "", corpo: "", segmento: "Todos", importante: false });
-    showToast("Comunicado publicado.");
-  }
-
-  return (
-    <div className="fade-up">
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-        {(role === "sindico" || role === "portaria") && <Button icon={Plus} onClick={() => setNovoOpen(true)}>Novo comunicado</Button>}
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {comunicados.map((c) => (
-          <Card key={c.id}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginBottom: 8, flexWrap: "wrap" }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                {c.importante && <Badge bg={C.dangerLight} fg={C.danger}>Importante</Badge>}
-                <Badge bg={C.infoLight} fg={C.info}>{c.segmento}</Badge>
-              </div>
-              <span style={{ fontSize: 12, color: C.textFaint }}>{c.data.slice(8, 10)}/{c.data.slice(5, 7)}/{c.data.slice(0, 4)} · {c.autor}</span>
-            </div>
-            <div style={{ fontFamily: FONT_DISPLAY, fontSize: 16, fontWeight: 600, color: C.ink, marginBottom: 6 }}>{c.titulo}</div>
-            <div style={{ fontSize: 13.5, color: C.textMuted, lineHeight: 1.6 }}>{c.corpo}</div>
-          </Card>
-        ))}
-      </div>
-
-      <Modal open={novoOpen} onClose={() => setNovoOpen(false)} title="Novo comunicado">
-        <form onSubmit={publicar}>
-          <Field label="Título">
-            <input required style={inputStyle} value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} />
-          </Field>
-          <Field label="Mensagem">
-            <textarea required style={{ ...inputStyle, minHeight: 100, resize: "vertical" }} value={form.corpo} onChange={(e) => setForm({ ...form, corpo: e.target.value })} />
-          </Field>
-          <Field label="Enviar para">
-            <select style={inputStyle} value={form.segmento} onChange={(e) => setForm({ ...form, segmento: e.target.value })}>
-              <option>Todos</option><option>Bloco A</option><option>Bloco B</option><option>Torre 1</option><option>Torre 2</option><option>Unidade específica</option><option>Grupo específico</option>
-            </select>
-          </Field>
-          <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: C.textMuted, marginBottom: 18 }}>
-            <input type="checkbox" checked={form.importante} onChange={(e) => setForm({ ...form, importante: e.target.checked })} /> Marcar como importante
-          </label>
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <Button variant="outline" type="button" onClick={() => setNovoOpen(false)}>Cancelar</Button>
-            <Button type="submit">Publicar comunicado</Button>
-          </div>
-        </form>
-      </Modal>
-    </div>
-  );
-}
-
-/* ============================================================
-   PAGE: ENTREGAS
-   ============================================================ */
-function EntregasPage({ role, user, entregas, setEntregas, showToast }) {
-  const [novoOpen, setNovoOpen] = useState(false);
-  const [form, setForm] = useState({ destinatario: "", unidade: "", transportadora: "", codigo: "" });
-
-  const lista = role === "morador" ? entregas.filter((e) => e.unidade === user.unidade) : entregas;
-
-  function registrar(e) {
-    e.preventDefault();
-    const nova = { id: "EN-" + Math.floor(232 + Math.random() * 90), ...form, recebidoEm: "14/08 " + new Date().toTimeString().slice(0, 5), status: "Aguardando retirada", retiradoEm: null };
-    setEntregas([nova, ...entregas]);
-    setNovoOpen(false);
-    setForm({ destinatario: "", unidade: "", transportadora: "", codigo: "" });
-    showToast("Encomenda registrada. Morador notificado.");
-  }
-
-  function marcarRetirada(id) {
-    setEntregas(entregas.map((e) => e.id === id ? { ...e, status: "Retirada", retiradoEm: "14/08 " + new Date().toTimeString().slice(0, 5) } : e));
-    showToast("Encomenda marcada como retirada.");
-  }
-
-  return (
-    <div className="fade-up">
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-        {role === "portaria" && <Button icon={Plus} onClick={() => setNovoOpen(true)}>Registrar encomenda</Button>}
-      </div>
-      {lista.length === 0 ? (
-        <Card><EmptyState icon={Package} title="Nenhuma encomenda registrada" desc="Não há encomendas para exibir no momento." /></Card>
-      ) : (
-        <Card padded={false} style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 640 }}>
-            <thead>
-              <tr style={{ background: C.bg, textAlign: "left" }}>
-                {["Destinatário", "Unidade", "Transportadora", "Código", "Recebido em", "Status", ""].map((h) => (
-                  <th key={h} style={{ padding: "11px 16px", fontSize: 11.5, color: C.textMuted, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.3 }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {lista.map((e) => (
-                <tr key={e.id} style={{ borderTop: `1px solid ${C.border}` }}>
-                  <td style={{ padding: "12px 16px", fontWeight: 600, color: C.ink }}>{e.destinatario}</td>
-                  <td style={{ padding: "12px 16px", color: C.textMuted }}>{e.unidade}</td>
-                  <td style={{ padding: "12px 16px", color: C.textMuted }}>{e.transportadora}</td>
-                  <td style={{ padding: "12px 16px", color: C.textMuted, fontFamily: FONT_MONO, fontSize: 12 }}>{e.codigo}</td>
-                  <td style={{ padding: "12px 16px", color: C.textMuted }}>{e.recebidoEm}</td>
-                  <td style={{ padding: "12px 16px" }}><Badge bg={e.status === "Retirada" ? C.primaryLight : C.amberLight} fg={e.status === "Retirada" ? C.primaryDark : C.amber}>{e.status}</Badge></td>
-                  <td style={{ padding: "12px 16px" }}>
-                    {role === "portaria" && e.status !== "Retirada" && <Button variant="outline" style={{ padding: "6px 10px", fontSize: 12 }} onClick={() => marcarRetirada(e.id)}>Marcar retirada</Button>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
-      )}
-
-      <Modal open={novoOpen} onClose={() => setNovoOpen(false)} title="Registrar encomenda">
-        <form onSubmit={registrar}>
-          <Field label="Destinatário">
-            <input required style={inputStyle} value={form.destinatario} onChange={(e) => setForm({ ...form, destinatario: e.target.value })} />
-          </Field>
-          <Field label="Unidade">
-            <input required style={inputStyle} value={form.unidade} onChange={(e) => setForm({ ...form, unidade: e.target.value })} placeholder="Ex: 302" />
-          </Field>
-          <Field label="Transportadora">
-            <input required style={inputStyle} value={form.transportadora} onChange={(e) => setForm({ ...form, transportadora: e.target.value })} />
-          </Field>
-          <Field label="Código de rastreio">
-            <input style={inputStyle} value={form.codigo} onChange={(e) => setForm({ ...form, codigo: e.target.value })} />
-          </Field>
-          <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <Button variant="outline" type="button" onClick={() => setNovoOpen(false)}>Cancelar</Button>
-            <Button type="submit">Registrar</Button>
-          </div>
-        </form>
-      </Modal>
-    </div>
-  );
-}
-
-/* ============================================================
-   PAGE: FINANCEIRO
-   ============================================================ */
-function FinanceiroPage({ role }) {
-  return (
-    <div className="fade-up">
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 16 }}>
-        <StatCard icon={TrendingUp} label="Receita do mês" value={fmtBRL(154000)} accent={C.primary} />
-        <StatCard icon={TrendingDown} label="Despesa do mês" value={fmtBRL(129800)} accent={C.amber} />
-        <StatCard icon={DollarSign} label="Saldo do mês" value={fmtBRL(24200)} accent={C.primary} />
-        <StatCard icon={AlertTriangle} label="Inadimplência" value="4,8%" trend={-1} trendLabel="-0,3pp" accent={C.info} />
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 16 }} className="grid-stack">
-        <Card>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 12 }}>Receitas x Despesas</div>
-          <div>
-            <BarChartSVG
-              data={FINANCEIRO_MENSAL}
-              xKey="mes"
-              height={260}
-              formatValue={fmtBRL}
-              series={[
-                { key: "receitas", label: "Receitas", color: C.primary },
-                { key: "despesas", label: "Despesas", color: C.amber },
-              ]}
-            />
-          </div>
-        </Card>
-        <Card>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 12 }}>Despesas por categoria</div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <DonutChartSVG data={DESPESAS_CATEGORIA} colors={PIE_COLORS} size={200} formatValue={fmtBRL} />
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
-            {DESPESAS_CATEGORIA.map((d, i) => (
-              <div key={d.nome} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12 }}>
-                <span style={{ width: 8, height: 8, borderRadius: 999, background: PIE_COLORS[i % PIE_COLORS.length] }} />
-                <span style={{ flex: 1, color: C.textMuted }}>{d.nome}</span>
-                <span style={{ fontWeight: 600, color: C.ink }}>{fmtBRL(d.valor)}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-      {role !== "sindico" && (
-        <Card style={{ marginTop: 16 }}>
-          <div style={{ fontWeight: 700, fontSize: 15, color: C.ink, marginBottom: 4 }}>Minha situação — Unidade</div>
-          <div style={{ fontSize: 13, color: C.textMuted, marginBottom: 12 }}>Cota condominial de agosto</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <CheckCircle2 size={18} color={C.primary} />
-            <span style={{ fontSize: 14, fontWeight: 600, color: C.ink }}>Pagamento em dia — vencimento dia 10</span>
-          </div>
-        </Card>
-      )}
     </div>
   );
 }
@@ -2289,96 +1455,3 @@ function StubPage({ id }) {
   );
 }
 
-/* ============================================================
-   ROOT APP
-   ============================================================ */
-function App() {
-  const [session, setSession] = useState(null); // { role, user }
-  const [page, setPage] = useState("dashboard");
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
-  const [notifs, setNotifs] = useState(NOTIFICACOES);
-  const [toast, setToast] = useState(null);
-
-  const [ocorrencias, setOcorrencias] = useState(OCORRENCIAS);
-  const [reservas, setReservas] = useState(RESERVAS);
-  const [comunicados, setComunicados] = useState(COMUNICADOS);
-  const [entregas, setEntregas] = useState(ENTREGAS);
-
-  function showToast(msg) {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3000);
-  }
-
-  function handleLogin(role, overrides = {}) {
-    const user = { ...DEMO_USERS[role], ...overrides };
-
-    // Os dados de exemplo (ocorrências, reservas, entregas) foram todos
-    // pré-cadastrados no nome da moradora demo "Renata Bittencourt".
-    // Para quem loga como morador com outro nome, "adotamos" esses
-    // registros de exemplo para o nome novo, senão o dashboard apareceria vazio.
-    if (role === "morador" && user.name !== DEMO_USERS.morador.name) {
-      const nomeOriginal = DEMO_USERS.morador.name;
-      setOcorrencias((prev) => prev.map((o) => (o.morador === nomeOriginal ? { ...o, morador: user.name, unidade: user.unidade } : o)));
-      setReservas((prev) => prev.map((r) => (r.morador === nomeOriginal ? { ...r, morador: user.name, unidade: user.unidade } : r)));
-      setEntregas((prev) => prev.map((e) => (e.destinatario === nomeOriginal ? { ...e, destinatario: user.name, unidade: user.unidade } : e)));
-    }
-
-    setSession({ role, user });
-    setPage("dashboard");
-  }
-
-  function handleLogout() {
-    setSession(null);
-    setPage("dashboard");
-  }
-
-  if (!session) return <LoginScreen onLogin={handleLogin} />;
-
-  const { role, user } = session;
-  const navItems = NAV[role];
-  const pageTitle = page === "dashboard" ? `Olá, ${user.name.split(" ")[0]}` : (navItems.find((n) => n.id === page)?.label || "Zeluvi");
-
-  let content;
-  if (page === "dashboard") {
-    content = role === "morador" ? <DashboardMorador user={user} setPage={setPage} ocorrencias={ocorrencias} reservas={reservas} comunicados={comunicados} entregas={entregas} />
-      : role === "sindico" ? <DashboardSindico setPage={setPage} ocorrencias={ocorrencias} />
-      : <DashboardPortaria setPage={setPage} entregas={entregas} />;
-  } else if (page === "ocorrencias") {
-    content = <OcorrenciasPage role={role} user={user} ocorrencias={ocorrencias} setOcorrencias={setOcorrencias} showToast={showToast} />;
-  } else if (page === "reservas") {
-    content = <ReservasPage role={role} user={user} reservas={reservas} setReservas={setReservas} showToast={showToast} />;
-  } else if (page === "comunicados") {
-    content = <ComunicadosPage role={role} comunicados={comunicados} setComunicados={setComunicados} showToast={showToast} />;
-  } else if (page === "entregas") {
-    content = <EntregasPage role={role} user={user} entregas={entregas} setEntregas={setEntregas} showToast={showToast} />;
-  } else if (page === "financeiro") {
-    content = <FinanceiroPage role={role} />;
-  } else if (page === "copiloto") {
-    content = <CopilotoPage />;
-  } else {
-    content = <StubPage id={page} />;
-  }
-
-  return (
-    <div style={{ background: C.bg, minHeight: "100vh", fontFamily: FONT_BODY, "--sidebar-width": (collapsed ? 74 : 240) + "px" }}>
-      <Sidebar role={role} page={page} setPage={setPage} collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
-      <div className="content-area">
-        <Topbar user={user} role={role} onLogout={handleLogout} setMobileOpen={setMobileOpen} notifOpen={notifOpen} setNotifOpen={setNotifOpen} notifs={notifs} setNotifs={setNotifs} pageTitle={pageTitle} />
-        <div style={{ padding: "0 24px 40px", maxWidth: 1280 }}>
-          {content}
-        </div>
-      </div>
-      {toast && (
-        <div className="pop-in" style={{ position: "fixed", bottom: 24, right: 24, background: C.ink, color: "#fff", padding: "12px 18px", borderRadius: 11, fontSize: 13.5, display: "flex", alignItems: "center", gap: 8, boxShadow: "0 12px 32px rgba(15,33,27,0.3)", zIndex: 200, maxWidth: 320 }}>
-          <CheckCircle2 size={16} color={C.amber} /> {toast}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const rootEl = document.getElementById("root");
-rootEl.innerHTML = "";
-ReactDOM.createRoot(rootEl).render(<App />);
