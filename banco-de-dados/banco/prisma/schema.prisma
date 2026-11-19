@@ -1,10 +1,3 @@
-// ZELUVI - modelo do banco para o Prisma (PostgreSQL 16)
-// Espelha o schema.sql versao 4 (18 tabelas).
-// Padrao: modelo em PascalCase no singular; @@map liga ao nome real da tabela (snake_case);
-// @map liga ao nome real da coluna quando o nome no codigo e diferente.
-// As regras CHECK e o indice unico parcial da reserva NAO existem no Prisma:
-// ficam no arquivo regras_extras.sql (veja o PASSO_A_PASSO.md).
-
 generator client {
   provider = "prisma-client-js"
 }
