@@ -113,7 +113,33 @@ flowchart LR
 
 ---
 
-## 🚀 Como rodar o protótipo
+## 🚀 Como rodar o CRUD de Avisos (Fase 5)
+
+O CRUD de Avisos integra **banco de dados → back-end → front-end**: o síndico publica, edita e remove avisos; moradores e portaria só leem.
+
+**Pré-requisitos:** Node.js 18+ e PostgreSQL 16 (com a senha do usuário `postgres`).
+
+```bash
+# 1. Back-end (API na porta 3333)
+cd backend
+cp .env.example .env        # no Windows: copy .env.example .env  (ajuste a senha do PostgreSQL)
+npm install
+npm run db:setup            # cria as tabelas (migrações) e os dados de teste
+npm run dev
+
+# 2. Front-end (em outro terminal, abre em http://localhost:5173)
+cd zeluvi-frontend/frontend
+npm install
+npm run web
+```
+
+Usuários de teste (senha `Senha@123`): `sindico@aurora.com` (cria, edita e remove avisos), `ana@aurora.com` (moradora) e `portaria@aurora.com`.
+
+Detalhes do banco em [`banco-de-dados/README_BANCO.md`](banco-de-dados/README_BANCO.md) e da API em [`backend/README.md`](backend/README.md).
+
+> ℹ️ Nesta entrega só o CRUD de **Avisos** está integrado de ponta a ponta. As demais telas (Reservas, Ocorrências etc.) ainda não têm back-end.
+
+## 🖼️ Como rodar o protótipo (sem back-end)
 
 O protótipo do front-end é uma página estática (HTML, CSS e React carregado por CDN), então **não precisa instalar dependências**.
 
@@ -181,8 +207,10 @@ ZELUVII/
 - [x] Definição de arquitetura
 - [x] Protótipo do front-end
 - [x] Especificação das APIs de autenticação e moradores
-- [ ] Backend (API REST + banco de dados)
-- [ ] Integração do front-end com a API
+- [x] Banco de dados (18 tabelas, migrações e seed com Prisma + PostgreSQL)
+- [x] CRUD de Avisos: back-end, banco e front-end integrados (Fase 5)
+- [ ] Demais módulos do back-end (reservas, ocorrências, portaria, financeiro)
+- [ ] Integração das demais telas do front-end com a API
 - [ ] Aplicativo mobile
 - [ ] Módulos de inteligência artificial
 
