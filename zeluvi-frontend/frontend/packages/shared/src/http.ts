@@ -23,6 +23,6 @@ export function criarCliente(baseUrl:string, store:Armazenamento) {
     if(!res.ok) throw await lerErro(res);
     return res.status===204 ? (undefined as T) : res.json();
   }
-  return { get:<T>(c:string)=>req<T>('GET',c), post:<T>(c:string,b?:unknown)=>req<T>('POST',c,b), patch:<T>(c:string,b?:unknown)=>req<T>('PATCH',c,b) };
+  return { get:<T>(c:string)=>req<T>('GET',c), post:<T>(c:string,b?:unknown)=>req<T>('POST',c,b), patch:<T>(c:string,b?:unknown)=>req<T>('PATCH',c,b), del:<T>(c:string)=>req<T>('DELETE',c) };
 }
 export type Cliente=ReturnType<typeof criarCliente>;
