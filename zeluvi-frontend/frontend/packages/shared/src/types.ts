@@ -8,4 +8,6 @@ export interface Sessao { access_token:string; refresh_token:string; usuario:Usu
 export interface AreaComum { id_area:number; nome:string; regras?:string; capacidade?:number }
 export interface Reserva { id_reserva:number; id_area:number; id_morador:number; inicio:string; fim:string; status:StatusReserva; area?:string }
 export interface NovaReserva { id_area:number; inicio:string; fim:string; convidados?:number; observacao?:string }
-export interface Aviso { id_comunicado:number; titulo:string; conteudo:string; data_publicacao:string; lido?:boolean }
+/** Aviso como a API do back-end devolve (GET /avisos). */
+export interface Aviso { id:number; titulo:string; conteudo:string; autor:{id:number;nome:string}; publicadoEm:string; expiraEm:string|null; atualizadoEm:string|null }
+export interface NovoAviso { titulo:string; conteudo:string }
