@@ -14,7 +14,7 @@ Cada pessoa cria o proprio banco local a partir da migracao que esta neste repos
 ## Como criar o banco na sua maquina
 
 1. Crie um banco vazio chamado `zeluvi` (no DBeaver: botao direito em "Bancos de dados" > "Criar novo banco de dados").
-2. Na pasta do backend, copie `.env.example` para `.env` e coloque a sua senha do PostgreSQL:
+2. Entre na pasta `backend/`, copie `.env.example` para `.env` e coloque a sua senha do PostgreSQL:
    ```
    DATABASE_URL="postgresql://postgres:SUASENHA@localhost:5432/zeluvi?schema=public"
    ```
@@ -49,9 +49,17 @@ Usuarios de teste (senha `Senha@123`): `ana@aurora.com` (moradora) e `sindico@au
 ## Estrutura
 
 ```
-prisma/
-  schema.prisma        modelo das 18 tabelas
-  migrations/          criacao das tabelas e das regras (nao editar as antigas)
-  seed.js              dados de teste
-.env.example           modelo da conexao
+backend/
+  .env.example         modelo da conexao
+  .gitignore           impede o envio do .env e do node_modules
+  package.json         scripts do Prisma (db:setup = migrate deploy + seed)
+  prisma/
+    schema.prisma      modelo das 18 tabelas
+    migrations/        criacao das tabelas e das regras (nao editar as antigas)
+      20261119215125_init                              tabelas, chaves e regras (Cauã)
+      20261119230000_avisos_expiracao_edicao_remocao   colunas de validade, edicao e remocao de aviso
+    seed.js            dados de teste
+banco-de-dados/
+  schema.sql           referencia legivel do banco (a fonte para criar e o Prisma)
+  DER/ e dicionario-de-dados/
 ```
