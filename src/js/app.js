@@ -651,6 +651,82 @@ const DEMO_USERS = {
 };
 
 /* ============================================================
+   INTEGRAÇÃO COM A API (backend/ — Express + Prisma + PostgreSQL)
+   O login por e-mail e a tela de Comunicados/Avisos usam dados reais.
+   Abra o front por http://localhost:3333 (servido pelo próprio backend).
+   ============================================================ */
+// Servido pelo backend: mesma origem. Aberto como arquivo ou pelo Live Server (5500): aponta para a API na 3333.
+const API_URL = window.ZELUVI_API_URL || ((location.protocol === "file:" || location.port === "5500") ? "http://localhost:3333/api/v1" : "/api/v1");
+
+// Usuários criados pelo seed do banco (senha: Senha@123)
+const API_DEMO_EMAIL = { morador: "ana@aurora.com", sindico: "sindico@aurora.com", portaria: "portaria@aurora.com" };
+
+// Perfis da API (token) -> perfis usados nas telas do protótipo
+const PERFIL_PARA_ROLE = { SINDICO: "sindico", MORADOR: "morador", PORTEIRO: "portaria" };
+
+async function api(caminho, { token, method = "GET", body } = {}) {
+  let resp;
+  try {
+    resp = await fetch(API_URL + caminho, {
+      method,
+      headers: {
+        ...(body ? { "Content-Type": "application/json" } : {}),
+        ...(token ? { Authorization: "Bearer " + token } : {}),
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch (e) {
+    const err = new Error("Não foi possível conectar à API. Verifique se o back-end está rodando (npm run dev na pasta backend).");
+    err.codigo = "SEM_CONEXAO";
+    throw err;
+  }
+  if (resp.status === 204) return null;
+  const dados = await resp.json().catch(() => null);
+  if (!resp.ok) {
+    const e = (dados && dados.erro) || {};
+    const msg = e.detalhes && e.detalhes.length ? e.detalhes.map((d) => d.mensagem).join(" ") : (e.mensagem || "Erro inesperado.");
+    const err = new Error(msg);
+    err.status = resp.status;
+    err.codigo = e.codigo;
+    throw err;
+  }
+  return dados;
+}
+
+function dataLocalISO(iso) {
+  const d = new Date(iso);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+// Valor para <input type="datetime-local"> a partir de uma data ISO
+function paraInputDataHora(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
+function fmtDataHora(iso) {
+  return new Date(iso).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+// Aviso da API -> formato de comunicado usado pelas telas do protótipo
+function avisoParaComunicado(a) {
+  return {
+    id: a.id,
+    titulo: a.titulo,
+    corpo: a.conteudo,
+    segmento: "Todos",
+    data: dataLocalISO(a.publicadoEm),
+    autor: a.autor ? a.autor.nome : "",
+    importante: false,
+    expiraEm: a.expiraEm,
+    atualizadoEm: a.atualizadoEm,
+    api: true,
+  };
+}
+
+/* ============================================================
    SHARED UI PRIMITIVES
    ============================================================ */
 function Card({ children, style, className = "", padded = true }) {
@@ -1073,7 +1149,9 @@ function GoogleG({ size = 18 }) {
 
 function LoginScreen({ onLogin }) {
   const [role, setRole] = useState("morador");
-  const [email, setEmail] = useState(DEMO_USERS.morador.email);
+  const [email, setEmail] = useState(API_DEMO_EMAIL.morador);
+  const [senha, setSenha] = useState("");
+  const [erroLogin, setErroLogin] = useState("");
   const [loginMethod, setLoginMethod] = useState("email"); // "email" | "celular"
   const [telefone, setTelefone] = useState("");
   const [nomeCelular, setNomeCelular] = useState("");
@@ -1083,7 +1161,7 @@ function LoginScreen({ onLogin }) {
   const [ripples, setRipples] = useState([]);
   const heroRef = useRef(null);
 
-  useEffect(() => { setEmail(DEMO_USERS[role].email); }, [role]);
+  useEffect(() => { setEmail(API_DEMO_EMAIL[role]); setErroLogin(""); }, [role]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -1121,17 +1199,33 @@ function LoginScreen({ onLogin }) {
     return () => el.removeEventListener("click", handleClick);
   }, []);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      if (loginMethod === "celular") {
+    setErroLogin("");
+
+    // Login por celular continua só demonstrativo (fora do escopo da API de autenticação)
+    if (loginMethod === "celular") {
+      setTimeout(() => {
         onLogin(role, { name: nomeCelular.trim() || `Usuário ${telefone.slice(-4)}`, telefone });
-      } else {
-        onLogin(role, { name: nameFromEmail(email), email });
+        setLoading(false);
+      }, 600);
+      return;
+    }
+
+    // Login por e-mail: POST /api/v1/auth/login (usuário real do banco)
+    try {
+      const { token, usuario } = await api("/auth/login", { method: "POST", body: { email, senha } });
+      const overrides = { name: usuario.nome, email: usuario.email, token, perfilApi: usuario.perfil, idApi: usuario.id };
+      if (usuario.unidade) {
+        overrides.unidade = usuario.unidade.numero;
+        if (usuario.unidade.bloco) overrides.bloco = "Bloco " + usuario.unidade.bloco;
       }
+      onLogin(PERFIL_PARA_ROLE[usuario.perfil] || role, overrides);
+    } catch (err) {
+      setErroLogin(err.message);
       setLoading(false);
-    }, 600);
+    }
   }
 
   function handleGoogleLogin() {
@@ -1287,8 +1381,13 @@ function LoginScreen({ onLogin }) {
             </>
           )}
           <Field label="Senha">
-            <input style={inputStyle} type="password" defaultValue="••••••••" />
+            <input style={inputStyle} type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder={loginMethod === "email" ? "Senha@123 (usuários de teste)" : ""} />
           </Field>
+          {erroLogin && (
+            <div role="alert" style={{ marginBottom: 14, padding: "10px 12px", borderRadius: 9, background: C.dangerLight, color: C.danger, fontSize: 13 }}>
+              {erroLogin}
+            </div>
+          )}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 22, fontSize: 13 }}>
             <label style={{ display: "flex", alignItems: "center", gap: 7, color: C.textMuted, cursor: "pointer" }}>
               <input type="checkbox" defaultChecked /> Lembrar acesso
@@ -1307,7 +1406,7 @@ function LoginScreen({ onLogin }) {
           </a>
         </div>
         <div style={{ marginTop: 16, padding: 14, borderRadius: 10, background: C.primaryLight, fontSize: 12.5, color: C.primaryDark, lineHeight: 1.5 }}>
-          Ambiente de demonstração — os dados exibidos são fictícios e servem apenas para ilustrar a experiência do Zeluvi.
+          Login por e-mail conectado à API. Usuários de teste (senha <b>Senha@123</b>): sindico@aurora.com, ana@aurora.com e portaria@aurora.com. Os avisos vêm do banco; as demais telas ainda usam dados fictícios.
         </div>
       </Modal>
 
@@ -1958,24 +2057,98 @@ function ReservasPage({ role, user, reservas, setReservas, showToast }) {
 /* ============================================================
    PAGE: COMUNICADOS
    ============================================================ */
-function ComunicadosPage({ role, comunicados, setComunicados, showToast }) {
-  const [novoOpen, setNovoOpen] = useState(false);
-  const [form, setForm] = useState({ titulo: "", corpo: "", segmento: "Todos", importante: false });
+// Com login real (token), a tela usa a API: GET/POST/PATCH/DELETE /api/v1/avisos.
+// Sem token (login demonstrativo por celular/Google), mantém o comportamento local do protótipo.
+function ComunicadosPage({ role, user, comunicados, setComunicados, showToast, recarregar }) {
+  const modoApi = Boolean(user && user.token);
+  // Pela matriz de permissões, só o SÍNDICO publica, edita e remove avisos
+  const podeGerenciar = modoApi ? role === "sindico" : (role === "sindico" || role === "portaria");
+  const formVazio = { titulo: "", corpo: "", segmento: "Todos", importante: false, expiraEm: "" };
 
-  function publicar(e) {
-    e.preventDefault();
-    const novo = { id: "CM-" + Math.floor(89 + Math.random() * 10), titulo: form.titulo, corpo: form.corpo, segmento: form.segmento, data: "2026-08-14", autor: role === "sindico" ? "Síndico" : "Portaria", importante: form.importante };
-    setComunicados([novo, ...comunicados]);
-    setNovoOpen(false);
-    setForm({ titulo: "", corpo: "", segmento: "Todos", importante: false });
-    showToast("Comunicado publicado.");
+  const [novoOpen, setNovoOpen] = useState(false);
+  const [editando, setEditando] = useState(null);
+  const [form, setForm] = useState(formVazio);
+  const [erro, setErro] = useState("");
+  const [salvando, setSalvando] = useState(false);
+
+  function abrirNovo() {
+    setEditando(null);
+    setForm(formVazio);
+    setErro("");
+    setNovoOpen(true);
   }
+
+  function abrirEdicao(c) {
+    setEditando(c);
+    setForm({ ...formVazio, titulo: c.titulo, corpo: c.corpo, expiraEm: paraInputDataHora(c.expiraEm) });
+    setErro("");
+    setNovoOpen(true);
+  }
+
+  function fechar() {
+    setNovoOpen(false);
+    setEditando(null);
+  }
+
+  async function publicar(e) {
+    e.preventDefault();
+
+    if (!modoApi) {
+      const novo = { id: "CM-" + Math.floor(89 + Math.random() * 10), titulo: form.titulo, corpo: form.corpo, segmento: form.segmento, data: "2026-08-14", autor: role === "sindico" ? "Síndico" : "Portaria", importante: form.importante };
+      setComunicados([novo, ...comunicados]);
+      fechar();
+      setForm(formVazio);
+      showToast("Comunicado publicado.");
+      return;
+    }
+
+    setSalvando(true);
+    setErro("");
+    const body = { titulo: form.titulo, conteudo: form.corpo };
+    const expiraISO = form.expiraEm ? new Date(form.expiraEm).toISOString() : null;
+    try {
+      if (editando) {
+        // Só envia expiraEm se mudou (evita revalidar uma data antiga)
+        if (form.expiraEm !== paraInputDataHora(editando.expiraEm)) body.expiraEm = expiraISO;
+        await api(`/avisos/${editando.id}`, { method: "PATCH", token: user.token, body });
+        showToast("Aviso atualizado.");
+      } else {
+        if (expiraISO) body.expiraEm = expiraISO;
+        await api("/avisos", { method: "POST", token: user.token, body });
+        showToast("Aviso publicado.");
+      }
+      fechar();
+      await recarregar();
+    } catch (err) {
+      setErro(err.message);
+    } finally {
+      setSalvando(false);
+    }
+  }
+
+  async function remover(c) {
+    if (!window.confirm(`Remover o aviso "${c.titulo}"?`)) return;
+    try {
+      await api(`/avisos/${c.id}`, { method: "DELETE", token: user.token });
+      showToast("Aviso removido.");
+      await recarregar();
+    } catch (err) {
+      showToast(err.message);
+    }
+  }
+
+  const expirado = (c) => c.expiraEm && new Date(c.expiraEm) <= new Date();
 
   return (
     <div className="fade-up">
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
-        {(role === "sindico" || role === "portaria") && <Button icon={Plus} onClick={() => setNovoOpen(true)}>Novo comunicado</Button>}
+        {podeGerenciar && <Button icon={Plus} onClick={abrirNovo}>{modoApi ? "Novo aviso" : "Novo comunicado"}</Button>}
       </div>
+
+      {comunicados.length === 0 && (
+        <EmptyState icon={Megaphone} title="Nenhum aviso publicado" desc={podeGerenciar ? "Publique o primeiro aviso para o condomínio." : "Quando o síndico publicar um aviso, ele aparece aqui."} />
+      )}
+
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {comunicados.map((c) => (
           <Card key={c.id}>
@@ -1983,34 +2156,56 @@ function ComunicadosPage({ role, comunicados, setComunicados, showToast }) {
               <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                 {c.importante && <Badge bg={C.dangerLight} fg={C.danger}>Importante</Badge>}
                 <Badge bg={C.infoLight} fg={C.info}>{c.segmento}</Badge>
+                {c.api && expirado(c) && <Badge bg={C.dangerLight} fg={C.danger}>Expirado</Badge>}
+                {c.api && c.expiraEm && !expirado(c) && <span style={{ fontSize: 12, color: C.textFaint }}>Vigente até {fmtDataHora(c.expiraEm)}</span>}
               </div>
-              <span style={{ fontSize: 12, color: C.textFaint }}>{c.data.slice(8, 10)}/{c.data.slice(5, 7)}/{c.data.slice(0, 4)} · {c.autor}</span>
+              <span style={{ fontSize: 12, color: C.textFaint }}>
+                {c.data.slice(8, 10)}/{c.data.slice(5, 7)}/{c.data.slice(0, 4)} · {c.autor}
+                {c.atualizadoEm ? " · editado" : ""}
+              </span>
             </div>
             <div style={{ fontFamily: FONT_DISPLAY, fontSize: 16, fontWeight: 600, color: C.ink, marginBottom: 6 }}>{c.titulo}</div>
-            <div style={{ fontSize: 13.5, color: C.textMuted, lineHeight: 1.6 }}>{c.corpo}</div>
+            <div style={{ fontSize: 13.5, color: C.textMuted, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{c.corpo}</div>
+            {modoApi && podeGerenciar && (
+              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 12 }}>
+                <Button variant="outline" onClick={() => abrirEdicao(c)}>Editar</Button>
+                <Button variant="outline" onClick={() => remover(c)} style={{ color: C.danger }}>Remover</Button>
+              </div>
+            )}
           </Card>
         ))}
       </div>
 
-      <Modal open={novoOpen} onClose={() => setNovoOpen(false)} title="Novo comunicado">
+      <Modal open={novoOpen} onClose={fechar} title={editando ? "Editar aviso" : (modoApi ? "Novo aviso" : "Novo comunicado")}>
         <form onSubmit={publicar}>
           <Field label="Título">
-            <input required style={inputStyle} value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} />
+            <input required minLength={3} maxLength={150} style={inputStyle} value={form.titulo} onChange={(e) => setForm({ ...form, titulo: e.target.value })} />
           </Field>
           <Field label="Mensagem">
-            <textarea required style={{ ...inputStyle, minHeight: 100, resize: "vertical" }} value={form.corpo} onChange={(e) => setForm({ ...form, corpo: e.target.value })} />
+            <textarea required maxLength={5000} style={{ ...inputStyle, minHeight: 100, resize: "vertical" }} value={form.corpo} onChange={(e) => setForm({ ...form, corpo: e.target.value })} />
           </Field>
-          <Field label="Enviar para">
-            <select style={inputStyle} value={form.segmento} onChange={(e) => setForm({ ...form, segmento: e.target.value })}>
-              <option>Todos</option><option>Bloco A</option><option>Bloco B</option><option>Torre 1</option><option>Torre 2</option><option>Unidade específica</option><option>Grupo específico</option>
-            </select>
-          </Field>
-          <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: C.textMuted, marginBottom: 18 }}>
-            <input type="checkbox" checked={form.importante} onChange={(e) => setForm({ ...form, importante: e.target.checked })} /> Marcar como importante
-          </label>
+          {modoApi ? (
+            <Field label="Vigente até (opcional)">
+              <input type="datetime-local" style={inputStyle} value={form.expiraEm} onChange={(e) => setForm({ ...form, expiraEm: e.target.value })} />
+            </Field>
+          ) : (
+            <>
+              <Field label="Enviar para">
+                <select style={inputStyle} value={form.segmento} onChange={(e) => setForm({ ...form, segmento: e.target.value })}>
+                  <option>Todos</option><option>Bloco A</option><option>Bloco B</option><option>Torre 1</option><option>Torre 2</option><option>Unidade específica</option><option>Grupo específico</option>
+                </select>
+              </Field>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: C.textMuted, marginBottom: 18 }}>
+                <input type="checkbox" checked={form.importante} onChange={(e) => setForm({ ...form, importante: e.target.checked })} /> Marcar como importante
+              </label>
+            </>
+          )}
+          {erro && (
+            <div role="alert" style={{ marginBottom: 14, padding: "10px 12px", borderRadius: 9, background: C.dangerLight, color: C.danger, fontSize: 13 }}>{erro}</div>
+          )}
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-            <Button variant="outline" type="button" onClick={() => setNovoOpen(false)}>Cancelar</Button>
-            <Button type="submit">Publicar comunicado</Button>
+            <Button variant="outline" type="button" onClick={fechar}>Cancelar</Button>
+            <Button type="submit" disabled={salvando}>{salvando ? "Salvando..." : editando ? "Salvar alterações" : modoApi ? "Publicar aviso" : "Publicar comunicado"}</Button>
           </div>
         </form>
       </Modal>
@@ -2311,6 +2506,23 @@ function App() {
     setTimeout(() => setToast(null), 3000);
   }
 
+  // Avisos reais: GET /api/v1/avisos (o síndico também vê os expirados)
+  async function carregarAvisos(sessao = session) {
+    if (!sessao || !sessao.user || !sessao.user.token) return;
+    const query = sessao.role === "sindico" ? "?limite=100&incluirExpirados=true" : "?limite=100";
+    try {
+      const resposta = await api("/avisos" + query, { token: sessao.user.token });
+      setComunicados(resposta.dados.map(avisoParaComunicado));
+    } catch (err) {
+      if (err.status === 401) { handleLogout(); return; } // token vencido: volta para o login
+      showToast(err.message);
+    }
+  }
+
+  useEffect(() => {
+    if (session && session.user.token) carregarAvisos(session);
+  }, [session]);
+
   function handleLogin(role, overrides = {}) {
     const user = { ...DEMO_USERS[role], ...overrides };
 
@@ -2331,6 +2543,7 @@ function App() {
 
   function handleLogout() {
     setSession(null);
+    setComunicados(COMUNICADOS);
     setPage("dashboard");
   }
 
@@ -2350,7 +2563,7 @@ function App() {
   } else if (page === "reservas") {
     content = <ReservasPage role={role} user={user} reservas={reservas} setReservas={setReservas} showToast={showToast} />;
   } else if (page === "comunicados") {
-    content = <ComunicadosPage role={role} comunicados={comunicados} setComunicados={setComunicados} showToast={showToast} />;
+    content = <ComunicadosPage role={role} user={user} comunicados={comunicados} setComunicados={setComunicados} showToast={showToast} recarregar={() => carregarAvisos()} />;
   } else if (page === "entregas") {
     content = <EntregasPage role={role} user={user} entregas={entregas} setEntregas={setEntregas} showToast={showToast} />;
   } else if (page === "financeiro") {
